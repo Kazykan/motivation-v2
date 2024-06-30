@@ -54,12 +54,15 @@ async def get_child(
 async def get_child_by_bot_user_id(
         session: AsyncSession,
         bot_user_id: int,
-) -> list[Child] | None:
+) -> Child | None:
     stmt = select(Child)
     stmt = stmt.where(Child.bot_user_id == bot_user_id)
     result: Result = await session.execute(stmt)
     child = result.scalars().all()
-    return list(child)
+    if len(child) == 0:
+        return None
+    else:
+        return child[0]
 
 async def get_child_by_phone_number(
         session: AsyncSession,

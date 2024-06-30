@@ -3,12 +3,15 @@ import { TabsLayout } from "./components/Tabs-layout"
 import { Navbar } from "./Navbar/navbar"
 import { useTgUserId } from "./store/tg_user_id"
 import { IWebApp } from "./telegram/t.types"
+import { useChildQuery } from "./hooks/useChildQuery"
 
 function App() {
   const tgUserId = useTgUserId((state) => state.tgUserId)
   const setTgUserId = useTgUserId((state) => state.setTgUserId)
 
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
+
+  const child = useChildQuery(tgUserId)
 
   useEffect(() => {
     const telegram = (window as any).Telegram.WebApp
@@ -43,6 +46,12 @@ function App() {
       <p>{tgUserId}</p>
 
       {tg?.user?.first_name}
+      {child.data && (
+        <>
+          <p>{child.data?.sex}</p>
+          <p>{child.data?.phone}</p>
+        </>
+      )}
     </>
   )
 }

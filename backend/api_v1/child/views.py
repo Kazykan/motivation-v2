@@ -29,7 +29,7 @@ router = APIRouter(tags=["Children"])
 #         return await crud.get_children(session=session)
 
 
-@router.get("/", response_model=list[Child])
+@router.get("/", response_model=list[Child] | Child)
 async def get_child(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
     child_id: int | None = None,
