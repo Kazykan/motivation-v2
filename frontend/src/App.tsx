@@ -11,7 +11,7 @@ function App() {
 
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
 
-  const child = useChildQuery(tgUserId)
+  const child = useChildQuery(tgUserId!)
 
   useEffect(() => {
     const telegram = (window as any).Telegram.WebApp
