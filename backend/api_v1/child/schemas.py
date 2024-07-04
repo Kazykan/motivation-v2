@@ -4,14 +4,14 @@ import datetime
 
 if TYPE_CHECKING:
     pass
-from api_v1.parent.schemas import ParentBase
+from api_v1.parent.schemas import Parent
 
 class ChildBase(BaseModel):
     bot_user_id: int
     name: str
-    birthday: datetime.date
+    birthday: datetime.date | None
     sex: int
-    max_payout: int
+    max_payout: int | None
     phone: str
     # parents: list[int] | None
     # activities: list[int] | None
@@ -42,5 +42,5 @@ class Child(ChildBase):
     id: int
 
 
-# class ChildSchema(Child):
-#     parents: list[ParentBase]
+class ChildSchema(Child):
+    parents: list[Parent]

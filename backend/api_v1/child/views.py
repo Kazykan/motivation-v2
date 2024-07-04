@@ -1,32 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from .schemas import Child, ChildCreate, ChildUpdate, ChildUpdatePartial
+from .schemas import Child, ChildCreate, ChildSchema, ChildUpdate, ChildUpdatePartial
 from . import crud
 from .dependencies import child_by_id
 from core.models import db_helper
 
 router = APIRouter(tags=["Children"])
-
-
-# @router.get("/", response_model=list[Child])
-# async def get_child(
-#     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-#     parent_id: int | None = None,
-# ):
-#     if parent_id is not None:
-#         expense = await crud.get_children_by_parent_id(
-#             session=session,
-#             parent_id=parent_id,
-#         )
-#         if expense is not None:
-#             return expense
-
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail=f"Child {parent_id} not found!",
-#         )
-#     else:
-#         return await crud.get_children(session=session)
 
 
 @router.get("/", response_model=list[Child] | Child)
@@ -72,6 +51,19 @@ async def get_child(
     return await crud.get_children(session=session)
 
 
+@router.get("/{child_id}", response_model=ChildSchema)
+async def get_child_by_id(
+    child_id: int,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    child = await crud.get_child_with_parents(
+        session=session,
+        child_id=child_id,
+    )
+    if child is not None:
+        return child
+
+
 @router.post(
     "/",
     response_model=Child,
@@ -87,21 +79,46 @@ async def create_expense(
     )
 
 
+# @router.post(
+#     "/child_parents",
+#     response_model=Child,
+#     status_code=status.HTTP_201_CREATED,
+# )
+# async def add_child_parents_relationship(
+#     child_id: int,
+#     parents_ids: list[int],
+#     session: AsyncSession = Depends(db_helper.session_dependency),
+# ):
+#     return await crud.add_child_parents_relationship(
+#         session=session,
+#         child_id=child_id,
+#         parents_ids=parents_ids,
+#     )
+
+
 @router.post(
-    "/child_parents",
-    response_model=Child,
+    "/add_child_parent",
+    response_model=ChildSchema,
     status_code=status.HTTP_201_CREATED,
 )
-async def add_child_parents_relationship(
+async def add_child_parent_relationship(
     child_id: int,
-    parents_ids: list[int],
+    parent_id: int,
+    add: bool = True,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.add_child_parents_relationship(
+    result = await crud.add_child_parent_relationship(
         session=session,
         child_id=child_id,
-        parents_ids=parents_ids,
+        parent_id=parent_id,
+        add=add,
     )
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Child {child_id} not found!",
+        )
+    return result
 
 
 @router.put("/{child_id}/")

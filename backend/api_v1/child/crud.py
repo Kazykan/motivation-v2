@@ -2,16 +2,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Child, Parent, child_mtm_parent
 from sqlalchemy.engine import Result
 from sqlalchemy import select, and_
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import selectinload
 
 from .schemas import ChildCreate, ChildUpdate, ChildUpdatePartial
-
-
-# async def get_children(session: AsyncSession) -> list[Child]:
-#     stmt = select(Child).order_by(Child.id)
-#     result: Result = await session.execute(stmt)
-#     children = result.scalars().all()
-#     return list(children)
 
 
 async def get_children(session: AsyncSession) -> list[Child]:
@@ -52,23 +45,37 @@ async def get_child(
 
 
 async def get_child_by_bot_user_id(
-        session: AsyncSession,
-        bot_user_id: int,
+    session: AsyncSession,
+    bot_user_id: int,
 ) -> Child | None:
     stmt = select(Child)
     stmt = stmt.where(Child.bot_user_id == bot_user_id)
     result: Result = await session.execute(stmt)
-    child = result.scalars().all()
-    if len(child) == 0:
-        return None
-    else:
-        return child[0]
+    child = result.scalars().first()
+    return child
+
 
 async def get_child_by_phone_number(
-        session: AsyncSession,
-        phone_number: str,
+    session: AsyncSession,
+    phone_number: str,
 ) -> Child | None:
     return await session.get(Child, phone_number)
+
+
+async def get_child_with_parents(
+        session: AsyncSession,
+        child_id: int,
+) -> Child | None:
+    stmt = (
+        select(Child)
+        .where(Child.id == child_id)
+        .options(
+            selectinload(Child.parents),
+        )
+    )
+    result: Result = await session.execute(stmt)
+    child = result.scalars().first()
+    return child
 
 
 async def create_child(
@@ -81,27 +88,56 @@ async def create_child(
     return child
 
 
-async def add_child_parents_relationship(
+async def add_child_parent_relationship(
     session: AsyncSession,
     child_id: int,
-    parents_ids: list[int],
-) -> Child | None:
+    parent_id: int,
+    add: bool = True,
+):
     child = await session.get(Child, child_id)
+    # проверка наличия ребенка
     if child is not None:
-        for parent_id in parents_ids:
-            parent = await session.scalar(
-                select(Parent)
-                .where(Parent.id == parent_id)
-                .options(
-                    selectinload(Parent.children),
-                ),
-            )
-            if parent is not None:
+        # Получаем данные
+        parent = await session.scalar(
+            select(Parent)
+            .where(Parent.id == parent_id)
+            .options(
+                selectinload(Parent.children),
+            ),
+        )
+        # Проверяем наличие дня недели
+        if parent is not None:
+            if add:
                 parent.children.append(child)
-                await session.commit()
-        return child
-    else:
-        return None
+            else:
+                parent.children.remove(child)
+            await session.commit()
+            child = await get_child_with_parents(session, child_id)
+            return child
+    return None
+
+
+# async def add_child_parents_relationship(
+#     session: AsyncSession,
+#     child_id: int,
+#     parents_ids: list[int],
+# ) -> Child | None:
+#     child = await session.get(Child, child_id)
+#     if child is not None:
+#         for parent_id in parents_ids:
+#             parent = await session.scalar(
+#                 select(Parent)
+#                 .where(Parent.id == parent_id)
+#                 .options(
+#                     selectinload(Parent.children),
+#                 ),
+#             )
+#             if parent is not None:
+#                 parent.children.append(child)
+#                 await session.commit()
+#         return child
+#     else:
+#         return None
 
 
 async def update_children(

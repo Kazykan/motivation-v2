@@ -24,9 +24,12 @@ app = FastAPI(
 origins = [
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:8000",
     "http://localhost:5173",
     "127.0.0.1:46532",
-    "https://tg-mini-app.local"
+    "https://tg-mini-app.local",
+    "http://tg-mini-app.local",
+    "*"
 ]
 
 app.add_middleware(

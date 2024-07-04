@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-
+from api_v1.week.schemas import Week
 
 class ActivityBase(BaseModel):
     name: str
@@ -32,3 +32,7 @@ class Activity(ActivityBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+
+class ActivitySchema(Activity):
+    weeks: list[Week]

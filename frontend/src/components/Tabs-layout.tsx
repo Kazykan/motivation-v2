@@ -16,8 +16,14 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { Weekdays } from "./calendar/calenar"
+import { useChildQuery } from "@/hooks/useChildQuery"
+import { useTgUser } from "@/store/tg_user"
 
 export function TabsLayout() {
+  const tgUserId = useTgUser((state) => state.tgUserId)
+  const child = useChildQuery(tgUserId!)
+
+
   return (
     <Tabs defaultValue="account" className="w-full px-5">
       <TabsList className="grid w-full grid-cols-3">
@@ -28,7 +34,7 @@ export function TabsLayout() {
       <TabsContent value="account">
         <Card>
           <CardHeader>
-            <CardTitle>Ильяс</CardTitle>
+            <CardTitle>{child.data?.name}</CardTitle>
             <CardDescription>
               Задания на неделю. Итог: 154р./250р.
             </CardDescription>

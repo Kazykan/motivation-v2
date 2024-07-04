@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from "react"
 import { TabsLayout } from "./components/Tabs-layout"
 import { Navbar } from "./Navbar/navbar"
-import { useTgUserId } from "./store/tg_user_id"
+import { useTgUser } from "./store/tg_user"
 import { IWebApp } from "./telegram/t.types"
 import { useChildQuery } from "./hooks/useChildQuery"
+import { CarouselDApiDemo } from "./components/carousel-layout"
+import { DialogAddUser } from "./components/dialog"
 
 function App() {
-  const tgUserId = useTgUserId((state) => state.tgUserId)
-  const setTgUserId = useTgUserId((state) => state.setTgUserId)
-
+  const tgUserId = useTgUser((state) => state.tgUserId)
+  const setTgUserId = useTgUser((state) => state.setTgUserId)
+  const tgUserName = useTgUser((state) => state.first_name)
+  const setTgUserName = useTgUser((state) => state.setFirstName)
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
 
   const child = useChildQuery(tgUserId!)
@@ -33,25 +36,34 @@ function App() {
   useEffect(() => {
     if (typeof tg.user?.id === "number") {
       setTgUserId(tg.user?.id)
+      setTgUserName(tg.user?.first_name)
     }
+    
+
   }, [webApp?.initDataUnsafe?.user?.id])
 
   return (
     <>
       <Navbar />
-      <div className="flex justify-center items-center relative">
+      {child.data ? (
         <TabsLayout />
-      </div>
-
-      <p>{tgUserId}</p>
-
-      {tg?.user?.first_name}
-      {child.data && (
+      ) : (
         <>
-          <p>{child.data?.sex}</p>
-          <p>{child.data?.phone}</p>
+          <div className="flex justify-center items-center relative mt-3">
+            <CarouselDApiDemo />
+          </div>
+          {tgUserId && (
+            <div className="flex justify-center items-center relative mb-3">
+              {tgUserId && <DialogAddUser />}
+            </div>
+          )}
         </>
       )}
+
+      {tg?.user?.photo_url && (
+        <img src={tg.user.photo_url} alt="User Photo" />
+      )}
+
     </>
   )
 }

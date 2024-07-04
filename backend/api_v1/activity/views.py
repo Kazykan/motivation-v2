@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .schemas import (
     Activity,
     ActivityCreate,
+    ActivitySchema,
     ActivityUpdate,
     ActivityUpdatePartial,
 )
@@ -49,18 +50,46 @@ async def create_transfer(
     )
 
 
-@router.get("/{place_id}/", response_model=Activity)
-async def get_transfer(
-    place_id: int,
+@router.post(
+    "/add_week_day",
+    response_model=ActivitySchema,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_activity_week_day_relationship(
+    activity_id: int,
+    week_id: int,
+    add: bool = True,
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    transfer = await crud.get_activity_filters(session=session, child_id=place_id)
-    if transfer is not None:
-        return transfer
+    result = await crud.add_activity_week_relationship(
+        session=session,
+        activity_id=activity_id,
+        week_id=week_id,
+        add=add,
+    )
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Activity {activity_id} not found!",
+        )
+    return result
+
+
+@router.get("/{activity_id}/", response_model=ActivitySchema)
+async def get_activity_by_id(
+    activity_id: int,
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    activity = await crud.get_activity_by_id(
+        session=session,
+        activity_id=activity_id,
+    )
+    if activity is not None:
+        return activity
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"WebAppUser {place_id} not found!",
+        detail=f"Activity {activity_id} not found!",
     )
 
 

@@ -10,6 +10,8 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel"
 
+const text_list = ["Создание задач и стоимости", "Подсчет стоимости", "Контроль выполнения", "Напоминание"]
+
 export function CarouselDApiDemo() {
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
@@ -32,11 +34,12 @@ export function CarouselDApiDemo() {
     <div>
       <Carousel setApi={setApi} className="w-full max-w-xs">
         <CarouselContent>
-          {Array.from({ length: 5 }).map((_, index) => (
+          {/* {Array.from({ length: 5 }).map((_, index) => ( */}
+          {text_list.map((text, index) => (
             <CarouselItem key={index}>
               <Card>
                 <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
+                  <span className="text-4xl font-semibold">{text}</span>
                 </CardContent>
               </Card>
             </CarouselItem>
