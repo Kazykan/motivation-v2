@@ -9,20 +9,66 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Weekdays } from "./calendar/calenar"
 import { useChildQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
+import { useChild } from "@/store/user"
+import { WeekDay } from "@/service/date"
+import { useWeek } from "@/store/week"
+import { useEffect, useMemo, useRef } from "react"
+import { ActivityDayService } from "@/service/activity_day.service"
+import { ActivityService } from "@/service/activity.service"
+import { IActivities } from "@/store/types"
 
 export function TabsLayout() {
   const tgUserId = useTgUser((state) => state.tgUserId)
   const child = useChildQuery(tgUserId!)
+  const setChildId = useChild((state) => state.setChildId)
+  const startOfDate = useWeek((state) => state.start_of_date)
+  const endOfWeek = useWeek((state) => state.end_of_week)
+  const currentWeek = useWeek((state) => state.current_week)
+  const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
+  const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
 
+  // Получаем id ребенка, если он есть, и сохраняем его
+  if (child.data !== null && child.data !== undefined) {
+    setChildId(child.data.id)
+  }
+
+  const activities = ActivityService.get(child.data?.id)
+
+  const weekDataStart = useMemo(
+    () => setStartOfWeek(currentWeek),
+    [currentWeek]
+  )
+
+  const weekDataEnd = useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
+
+  console.log(startOfDate, endOfWeek)
+  console.log(currentWeek)
+
+  // const data = WeekDay
+  // if (currentWeek === undefined) {
+  //   data.get_this_week()
+  // } else {
+  //   data.get_this_week(currentWeek.toISOString())
+  // }
+
+  // console.log(startOfDate, endOfWeek)
+  // useEffect(() => {
+  //   const weekData = () =>  {
+  //     const data = WeekDay
+  //     if (currentWeek === undefined) {
+  //       data.get_this_week()
+  //     } else {
+  //       data.get_this_week(currentWeek.current)
+  //     }
+  //   }
+  //   weekData()
+
+  // }, [])
+  // console.log(startOfDate, endOfWeek)
 
   return (
     <Tabs defaultValue="account" className="w-full px-5">
@@ -37,17 +83,27 @@ export function TabsLayout() {
             <CardTitle>{child.data?.name}</CardTitle>
             <CardDescription>
               Задания на неделю. Итог: 154р./250р.
+              <p>{startOfDate && startOfDate.toDateString()}</p>
+              <p>{endOfWeek && endOfWeek.toDateString()}</p>
+              <p>
+
+              </p>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="name">Уборка комнаты 36р. / 100р.</Label>
-              <Weekdays days={[0,1,1,2,0,1,3]} />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="username">Тренировки 78р. / 150р.</Label>
-              <Weekdays days={[0,1,1,2,0,1,3]} />
-            </div>
+          {(startOfDate || endOfWeek) && (
+                  <>
+                    {activities &&
+                      activities.then((activitiesData) =>
+                        activitiesData?.map((activity: IActivities) => (
+                          <div className="space-y-1">
+                          <Label htmlFor="name">{activity.name} 36р. / {activity.cost}р.</Label>
+                          <Weekdays activity_id={activity.id} />
+                        </div>
+                        ))
+                      )}
+                  </>
+                )}
           </CardContent>
           <CardFooter>
             <Button>Save changes</Button>

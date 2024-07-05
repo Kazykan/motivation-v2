@@ -50,7 +50,6 @@ export function ProfileForm() {
   })
 
   function onSubmit(values: z.infer<typeof ChildCreateSchema>) {
-    console.log(values)
     mutation.mutate(values)
   }
 

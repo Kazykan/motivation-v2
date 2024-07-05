@@ -1,4 +1,4 @@
-import { IChild, IParent } from "@/store/types"
+import { IParent } from "@/store/types"
 import { axiosInstance } from "./api"
 
 export const ChildService = {

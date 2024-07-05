@@ -10,7 +10,6 @@ import { DialogAddUser } from "./components/dialog"
 function App() {
   const tgUserId = useTgUser((state) => state.tgUserId)
   const setTgUserId = useTgUser((state) => state.setTgUserId)
-  const tgUserName = useTgUser((state) => state.first_name)
   const setTgUserName = useTgUser((state) => state.setFirstName)
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
 

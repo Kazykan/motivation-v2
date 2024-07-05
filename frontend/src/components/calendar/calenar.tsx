@@ -1,19 +1,37 @@
 import { Check, XIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ActivityDayService } from "@/service/activity_day.service"
+import { useWeek } from "@/store/week"
+import { IActivities } from "@/store/types"
+import { start } from "repl"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 const month_days = ["8", "9", "10", "11", "12", "13", "14"]
 const temp_days = [0, 1, 1, 2, 0, 2, 3]
 
 interface WeekdaysProps {
-  days: number[]
+  activity_id: number
 }
 
-export function Weekdays({ days }: WeekdaysProps) {
+
+
+export function Weekdays({ activity_id }: WeekdaysProps) {
+  const startOfDate = useWeek((state) => state.start_of_date)
+  const endOfWeek = useWeek((state) => state.end_of_week)
+  const activity_days = await ActivityDayService.get(activity_id, startOfDate, endOfWeek)
+  const current_week_days = () => {
+    let month_days: Date[] = []
+    for (let i = 0; i < 7; i++) {
+      month_days.push(new Date(new Date().setDate(startOfDate!.getDate() + i)))
+    return month_days
+  }}
+
+
   return (
     <>
       <div className="flex bg-gray-50  justify-start md:justify-center rounded-lg overflow-x-scroll mx-auto py-4 px-1  md:mx-12">
-        {temp_days.map((day, index) => {
+        {activity_days?.length !== 0 && 
+        {current_week_days.map((day, index) => {
           return (
             <div key={index} className="flex group rounded-lg mx-1 cursor-pointer justify-center relative w-10 content-center">
               {day === 1 && (
@@ -44,7 +62,7 @@ export function Weekdays({ days }: WeekdaysProps) {
               </div>
             </div>
           )
-        })}
+        })}}
 
         {/* <div className="flex group rounded-lg mx-1 cursor-pointer justify-center relative w-10 content-center">
           <div className="grid grid-cols-1 text-center w-10">
