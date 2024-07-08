@@ -20,6 +20,7 @@ import { useEffect, useMemo, useRef } from "react"
 import { ActivityDayService } from "@/service/activity_day.service"
 import { ActivityService } from "@/service/activity.service"
 import { IActivities } from "@/store/types"
+import { useActivityQuery } from "@/hooks/useActivityQuery"
 
 export function TabsLayout() {
   const tgUserId = useTgUser((state) => state.tgUserId)
@@ -36,7 +37,8 @@ export function TabsLayout() {
     setChildId(child.data.id)
   }
 
-  const activities = ActivityService.get(child.data?.id)
+  const activities = useActivityQuery(child.data?.id!)
+
 
   const weekDataStart = useMemo(
     () => setStartOfWeek(currentWeek),
@@ -48,27 +50,6 @@ export function TabsLayout() {
   console.log(startOfDate, endOfWeek)
   console.log(currentWeek)
 
-  // const data = WeekDay
-  // if (currentWeek === undefined) {
-  //   data.get_this_week()
-  // } else {
-  //   data.get_this_week(currentWeek.toISOString())
-  // }
-
-  // console.log(startOfDate, endOfWeek)
-  // useEffect(() => {
-  //   const weekData = () =>  {
-  //     const data = WeekDay
-  //     if (currentWeek === undefined) {
-  //       data.get_this_week()
-  //     } else {
-  //       data.get_this_week(currentWeek.current)
-  //     }
-  //   }
-  //   weekData()
-
-  // }, [])
-  // console.log(startOfDate, endOfWeek)
 
   return (
     <Tabs defaultValue="account" className="w-full px-5">
@@ -91,17 +72,15 @@ export function TabsLayout() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-          {(startOfDate || endOfWeek) && (
+          {(startOfDate && endOfWeek && activities.data !== undefined) && (
                   <>
-                    {activities &&
-                      activities.then((activitiesData) =>
-                        activitiesData?.map((activity: IActivities) => (
-                          <div className="space-y-1">
-                          <Label htmlFor="name">{activity.name} 36р. / {activity.cost}р.</Label>
-                          <Weekdays activity_id={activity.id} />
+                  {activities.data?.length > 0 && activities.data?.map(activities => (
+                    <div key={activities.id} className="space-y-1">
+                          <Label htmlFor="name">{activities.name} 36р. / {activities.cost}р.</Label>
+                          <Weekdays activity_id={activities.id} />
                         </div>
-                        ))
-                      )}
+                  ))}
+
                   </>
                 )}
           </CardContent>

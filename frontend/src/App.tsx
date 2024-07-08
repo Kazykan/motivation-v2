@@ -45,7 +45,11 @@ function App() {
     <>
       <Navbar />
       {child.data ? (
-        <TabsLayout />
+        <div>
+          TabLayout
+
+          <TabsLayout />
+        </div>
       ) : (
         <>
           <div className="flex justify-center items-center relative mt-3">
