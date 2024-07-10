@@ -14,13 +14,10 @@ import { Weekdays } from "./calendar/calenar"
 import { useChildQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
-import { WeekDay } from "@/service/date"
 import { useWeek } from "@/store/week"
-import { useEffect, useMemo, useRef } from "react"
-import { ActivityDayService } from "@/service/activity_day.service"
-import { ActivityService } from "@/service/activity.service"
-import { IActivities } from "@/store/types"
+import { useMemo } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
+import { useActivitySumDone } from "@/hooks/useActivitySumDone"
 
 export function TabsLayout() {
   const tgUserId = useTgUser((state) => state.tgUserId)
@@ -38,18 +35,19 @@ export function TabsLayout() {
   }
 
   const activities = useActivityQuery(child.data?.id!)
+  const sumActivitiesDays = useActivitySumDone(child.data?.id!, startOfDate, endOfWeek)
 
+  const sumAllActivitiesCost = useMemo(() => {
+    return activities.data?.reduce((sum, activity) => sum + activity.cost, 0) || 0
+  }, [activities.data])
 
+  
   const weekDataStart = useMemo(
     () => setStartOfWeek(currentWeek),
     [currentWeek]
   )
 
   const weekDataEnd = useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
-
-  console.log(startOfDate, endOfWeek)
-  console.log(currentWeek)
-
 
   return (
     <Tabs defaultValue="account" className="w-full px-5">
@@ -63,12 +61,7 @@ export function TabsLayout() {
           <CardHeader>
             <CardTitle>{child.data?.name}</CardTitle>
             <CardDescription>
-              Задания на неделю. Итог: 154р./250р.
-              <p>{startOfDate && startOfDate.toDateString()}</p>
-              <p>{endOfWeek && endOfWeek.toDateString()}</p>
-              <p>
-
-              </p>
+              Задания на неделю. Итог: {sumActivitiesDays && sumActivitiesDays?.data}р./{sumAllActivitiesCost}р.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -76,8 +69,7 @@ export function TabsLayout() {
                   <>
                   {activities.data?.length > 0 && activities.data?.map(activities => (
                     <div key={activities.id} className="space-y-1">
-                          <Label htmlFor="name">{activities.name} 36р. / {activities.cost}р.</Label>
-                          <Weekdays activity_id={activities.id} />
+                          <Weekdays activity_id={activities.id} cost={activities.cost} activity_name={activities.name}/>
                         </div>
                   ))}
 

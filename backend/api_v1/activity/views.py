@@ -32,7 +32,7 @@ async def get_activities(
             detail=f"Child {child_id} not found!",
         )
     else:
-        return await crud.get_transfers(session=session)
+        return await crud.get_activities(session=session)
 
 
 @router.post(
@@ -74,6 +74,26 @@ async def add_activity_week_day_relationship(
         )
     return result
 
+
+@router.get("/sum_is_done", response_model=int)
+async def get_sum_activities_is_done(
+    session: AsyncSession = Depends(db_helper.session_dependency),
+    day_start: str | None = None,
+    day_end: str | None = None,
+    child_id: int | None = None,
+):
+    if child_id is None or day_start is None or day_end is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Child id, day start and day end must be provided",
+        )
+    sum = await crud.get_sum_done_activities(
+        child_id=child_id,
+        session=session,
+        day_start=day_start,
+        day_end=day_end,
+    )
+    return sum
 
 @router.get("/{activity_id}/", response_model=ActivitySchema)
 async def get_activity_by_id(

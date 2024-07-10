@@ -1,12 +1,28 @@
-import { IActivities } from "@/store/types"
+import { IActivitiesDay } from "@/store/types"
 import { axiosInstance } from "./api"
+import { ConvertDate } from "./date"
 
 export const ActivityDayService = {
-    async get(activity_id: number | null, day_start: Date | null, day_end: Date | null) {
-        if (activity_id === null || day_start === null || day_end === null) {
-            return undefined
-        }
-        const response = await axiosInstance.get<IActivities[]>(`activity_days/?activity_id=${activity_id}&day_start=${activity_id}&day_end=${activity_id}`)
-        return response.data
+  async get_period(
+    activity_id: number | null,
+    day_start: Date | null,
+    day_end: Date | null
+  ) {
+    if (activity_id === null || day_start === null || day_end === null) {
+      return undefined
     }
+    const response = await axiosInstance.get<IActivitiesDay[]>(
+      `activity_days/?activity_id=${activity_id}&day_start=${ConvertDate(
+        day_start
+      )}&day_end=${ConvertDate(day_end)}`
+    )
+    return response.data
+  },
+  async create(activity_id: number, day: Date) {
+    const response = await axiosInstance.post<IActivitiesDay>(
+      `activity_days/`,
+      { activity_id, day: ConvertDate(day) }
+    )
+    return response.data
+  }
 }

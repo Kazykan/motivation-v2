@@ -21,20 +21,20 @@ export const useWeek = create<WeekState>((set) => ({
 
   setStartOfWeek: async (current_week: Date | undefined) => {
     if (current_week === undefined) {
-      const thisWeek = await WeekDay.get_this_week()
+      const thisWeek = WeekDay.get_this_week()
       set({ start_of_date: thisWeek })
     } else {
-      const thisWeek = await WeekDay.get_this_week(current_week)
+      const thisWeek = WeekDay.get_this_week(current_week)
       set({ start_of_date: thisWeek })
     }
   },
 
   setEndOfWeek: async (current_week: Date | undefined) => {
     if (current_week === undefined) {
-      const thisWeek = await WeekDay.get_this_week(undefined, false)
+      const thisWeek = WeekDay.get_this_week(undefined, false)
       set({ end_of_week: thisWeek })
     } else {
-      const thisWeek = await WeekDay.get_this_week(current_week, false)
+      const thisWeek = WeekDay.get_this_week(current_week, false)
       set({ end_of_week: thisWeek })
     }
   },

@@ -46,8 +46,6 @@ function App() {
       <Navbar />
       {child.data ? (
         <div>
-          TabLayout
-
           <TabsLayout />
         </div>
       ) : (
