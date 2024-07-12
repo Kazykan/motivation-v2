@@ -69,6 +69,10 @@ export interface IActivitiesDay {
   id: number
 }
 
+export interface IActivitiesDayPatchDone {
+  is_done: boolean
+}
+
 export interface IWeek {
   week_day: string
   id: number

@@ -5,6 +5,8 @@ import { useWeek } from "@/store/week"
 import { useActivityDayQuery } from "@/hooks/useActivityDayQuery"
 import { useMemo } from "react"
 import { isSameDay } from "date-fns"
+import { ActivityDayService } from "@/service/activity_day.service"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
@@ -42,78 +44,77 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
     week_days_by_activity.data?.find((_, index) =>
       isSameDay(day, week_days_by_activity.data![index].day)
     )
-  
+
   function sum_cost() {
     let quantity_days: number = 0
     let days_is_done: number = 0
     let total_cost: number = cost
-    if (week_days_by_activity.data === undefined || week_days_by_activity.data?.length === 0) {
+    if (
+      week_days_by_activity.data === undefined ||
+      week_days_by_activity.data?.length === 0
+    ) {
       return 0
     } else {
       quantity_days = week_days_by_activity.data.length
-      days_is_done = week_days_by_activity.data.filter(day => day.is_done).length
-      total_cost = quantity_days === days_is_done ? cost : Math.ceil(cost / quantity_days * days_is_done)
+      days_is_done = week_days_by_activity.data.filter(
+        (day) => day.is_done
+      ).length
+      total_cost =
+        quantity_days === days_is_done
+          ? cost
+          : Math.ceil((cost / quantity_days) * days_is_done)
     }
-    console.log(total_cost)
     return total_cost
   }
-  
 
   if (week_days_by_activity.data === undefined) {
     return <div>Нет заданий</div>
   }
 
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: ({ activity_day_id, is_done }) =>
+      ActivityDayService.update(activity_day_id, is_done),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["activity_days"] })
+    },
+  })
+
+  function onSubmit(activity_day_id: number | undefined, is_done: boolean | undefined) {
+    if (activity_day_id === undefined || is_done === undefined) {
+      return false
+    }
+    mutation.mutate(() => ({ activity_day_id, is_done }))
+  }
+
   return (
     <>
-      <Label htmlFor="name">{activity_name} {sum_cost()}р. / {cost}р.</Label>
-      <div className="flex bg-gray-50  justify-start md:justify-center rounded-lg overflow-x-scroll mx-auto py-4 px-1  md:mx-12">
+      <Label htmlFor="name">
+        {activity_name} {sum_cost()}р. /{" "}
+        <span className="text-black/70 dark:text-white/35">{cost}р.</span>
+      </Label>
+      <div className="dark:text-white/85 text-black/70 grid grid-cols-7 h-13 items-center justify-center rounded-lg bg-muted w-full py-1 px-1 space-x-2">
         {week_days_by_activity.data.length > 0 &&
           current_week_days !== undefined &&
           current_week_days.map((day: Date, index: number) => (
-            <div
+            <button
               key={index}
-              className="flex group rounded-lg mx-1 cursor-pointer justify-center relative w-10 content-center"
-              onClick= {() => console.log(day)}
-            >
-              {isDayActivity(day) && (
-                <div>
-                  {isDayActivity(day)?.is_done ? (
-                    <Check className="rounded-xl bg-green-500 text-gray-100 flex h-6 w-5 absolute -top-1 -right-1" />
-                  ) : (
-                    <XIcon className="rounded-xl bg-red-500 text-gray-100 flex h-6 w-5 absolute -top-1 -right-1" />
-                  )}
-                </div>
+              className={cn(
+                "grid justify-center items-center rounded-md px-1 py-2 text-sm font-medium space-y-1",
+                isDayActivity(day)
+                  ? isDayActivity(day)?.is_done
+                    ? "hover:bg-primary/90 bg-primary shadow"
+                    : "hover:bg-destructive/90 bg-destructive shadow"
+                  : "hover:bg-card/90 hover:shadow"
               )}
-              <div className="grid grid-cols-1 text-center w-10">
-                {isDayActivity(day) ? (
-                  <div
-                    className={cn(
-                      "flex mt-1 text-center rounded-lg px-1",
-                      isDayActivity(day)?.is_done
-                        ? "bg-green-500"
-                        : "bg-red-500"
-                    )}
-                  >
-                    <div className="flex text-center mt-2 mx-1">
-                      {week_days.at(index)}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex mt-1 text-center rounded-lg px-1">
-                    <div className="flex text-center mt-2 mx-1">
-                      {week_days.at(index)}
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-center">
-                  <p className="text-gray-900  mt-2 font-bold">
-                    {" "}
-                    {day.getDate()}{" "}
-                  </p>
-                </div>
-              </div>
-            </div>
+              onClick={() =>
+                onSubmit(isDayActivity(day)?.id, isDayActivity(day)?.is_done)
+              }
+            >
+              <div className="text-center">{week_days.at(index)}</div>
+              <div className="text-center">{day.getDate()}</div>
+            </button>
           ))}
       </div>
     </>

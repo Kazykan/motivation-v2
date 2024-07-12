@@ -15,9 +15,10 @@ import { useChildQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
+import { Switch } from "./ui/switch"
 
 export function TabsLayout() {
   const tgUserId = useTgUser((state) => state.tgUserId)
@@ -28,20 +29,31 @@ export function TabsLayout() {
   const currentWeek = useWeek((state) => state.current_week)
   const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
+  const [switchStatus, setSwitchStatus] = useState(false)
 
   // Получаем id ребенка, если он есть, и сохраняем его
   if (child.data !== null && child.data !== undefined) {
     setChildId(child.data.id)
   }
 
+  function toggleSwitch() {
+    setSwitchStatus((status) => !status)
+    console.log(`change switch status to ${switchStatus}`)
+  }
+
   const activities = useActivityQuery(child.data?.id!)
-  const sumActivitiesDays = useActivitySumDone(child.data?.id!, startOfDate, endOfWeek)
+  const sumActivitiesDays = useActivitySumDone(
+    child.data?.id!,
+    startOfDate,
+    endOfWeek
+  )
 
   const sumAllActivitiesCost = useMemo(() => {
-    return activities.data?.reduce((sum, activity) => sum + activity.cost, 0) || 0
+    return (
+      activities.data?.reduce((sum, activity) => sum + activity.cost, 0) || 0
+    )
   }, [activities.data])
 
-  
   const weekDataStart = useMemo(
     () => setStartOfWeek(currentWeek),
     [currentWeek]
@@ -53,28 +65,44 @@ export function TabsLayout() {
     <Tabs defaultValue="account" className="w-full px-5">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
-        <TabsTrigger value="Свойство">Свойство</TabsTrigger>
+        <TabsTrigger value="password">Дети</TabsTrigger>
+        <TabsTrigger value="Свойство">Вопросы</TabsTrigger>
       </TabsList>
       <TabsContent value="account">
         <Card>
           <CardHeader>
-            <CardTitle>{child.data?.name}</CardTitle>
+            <div className="flex justify-between">
+              <CardTitle>{child.data?.name}</CardTitle>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={switchStatus}
+                  onCheckedChange={() => toggleSwitch()}
+                />
+                <Label>Вкл. редак.</Label>
+              </div>
+            </div>
             <CardDescription>
-              Задания на неделю. Итог: {sumActivitiesDays && sumActivitiesDays?.data}р./{sumAllActivitiesCost}р.
+              Задания на неделю. Итог:{" "}
+              {sumActivitiesDays && sumActivitiesDays?.data}р./
+              {sumAllActivitiesCost}р.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-          {(startOfDate && endOfWeek && activities.data !== undefined) && (
-                  <>
-                  {activities.data?.length > 0 && activities.data?.map(activities => (
-                    <div key={activities.id} className="space-y-1">
-                          <Weekdays activity_id={activities.id} cost={activities.cost} activity_name={activities.name}/>
-                        </div>
-                  ))}
 
-                  </>
-                )}
+            {startOfDate && endOfWeek && activities.data !== undefined && (
+              <>
+                {activities.data?.length > 0 &&
+                  activities.data?.map((activities) => (
+                    <div key={activities.id} className="space-y-1">
+                      <Weekdays
+                        activity_id={activities.id}
+                        cost={activities.cost}
+                        activity_name={activities.name}
+                      />
+                    </div>
+                  ))}
+              </>
+            )}
           </CardContent>
           <CardFooter>
             <Button>Save changes</Button>
