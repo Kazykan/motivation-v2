@@ -28,10 +28,12 @@ export const ActivityDayService = {
     return response.data
   },
 
-  async update(activity_day_id: number, is_done: boolean) {
-    const response = await axiosInstance.patch(`activity_days/${activity_day_id}/`, {
-      is_done
+  async update(data: Omit<IActivitiesDay, "day">) {
+    console.log(`Updating activity day ${data.id} to ${data.is_done}`)
+    const response = await axiosInstance.patch<IActivitiesDay>(`activity_days/${data.id}/`, {
+      "is_done": data.is_done
     })
+    console.log(`response.data.is_done - ${response.data.is_done}`)
     return response.data
   }
 }
