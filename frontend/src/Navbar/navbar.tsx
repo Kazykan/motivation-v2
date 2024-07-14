@@ -34,16 +34,19 @@ export function Navbar() {
                 href="#"
               ></a>
               <div className="block relative">
-                <button
-                  type="button"
-                  className="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative "
+                <div
+                  className="py-2 px-3 relative "
                 >
+                {/* <button
+                  className="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative "
+                > */}
                   <div className="flex items-center h-5">
                     <div className="_xpkakx">
                       <ModeToggle />
                     </div>
                   </div>
-                </button>
+                </div>
+                {/* </button> */}
               </div>
             </div>
 
