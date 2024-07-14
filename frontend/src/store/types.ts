@@ -33,16 +33,6 @@ export const ChildCreateSchema = z.object({
 })
 
 
-// export interface IChild {
-//   id?: number
-//   bot_user_id: number
-//   name: string
-//   birthday?: Date
-//   sex: number
-//   max_payout?: number
-//   phone?: string
-// }
-
 export interface IParent {
   id: number
   bot_user_id?: number
@@ -67,10 +57,6 @@ export interface IActivitiesDay {
   day: Date
   activity_id: number
   id: number
-}
-
-export interface IActivitiesDayPatchDone {
-  is_done: boolean
 }
 
 export interface IWeek {
