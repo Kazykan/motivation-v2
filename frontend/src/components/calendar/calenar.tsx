@@ -1,12 +1,13 @@
-import { Check, XIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { useWeek } from "@/store/week"
-import { useActivityDayQuery } from "@/hooks/useActivityDayQuery"
+import {
+  useActivityDayQuery,
+  useUpdateActivityDayCheck,
+} from "@/hooks/useActivityDayQuery"
 import { useMemo } from "react"
 import { isSameDay } from "date-fns"
-import { ActivityDayService } from "@/service/activity_day.service"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { IActivitiesDay } from "@/store/types"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
@@ -19,6 +20,7 @@ interface WeekdaysProps {
 export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
+  
 
   const get_current_week_days = useMemo((): Date[] | undefined => {
     if (startOfDate !== undefined && startOfDate !== null) {
@@ -40,12 +42,13 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
     endOfWeek
   )
 
-  const isDayActivity = (day: Data) =>
+  const isDayActivity = (day: Data) => 
     week_days_by_activity.data?.find((_, index) =>
       isSameDay(day, week_days_by_activity.data![index].day)
     )
 
-  function sum_cost() {
+  const sum_cost = () => {
+    console.log(`sum_cost activity_id: ${activity_id}`)
     let quantity_days: number = 0
     let days_is_done: number = 0
     let total_cost: number = cost
@@ -67,27 +70,23 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
     return total_cost
   }
 
+  const updateMutation = useUpdateActivityDayCheck()
+  
   if (week_days_by_activity.data === undefined) {
     return <div>Нет заданий</div>
   }
 
-  const queryClient = useQueryClient()
-
-  const mutation = useMutation({
-    mutationFn: ({ activity_day_id, is_done }) =>
-      ActivityDayService.update(activity_day_id, is_done),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["activity_days"] })
-    },
-  })
-
-  function onSubmit(activity_day_id: number | undefined, is_done: boolean | undefined) {
-    if (activity_day_id === undefined || is_done === undefined) {
-      return false
-    }
-    mutation.mutate(() => ({ activity_day_id, is_done }))
+  const onSubmit = (data: Omit<IActivitiesDay, "day">) => {
+    
+    console.log(`onSubmit activity_day_id: ${data.id}`)
+    console.log(`is_done: ${!data.is_done} id: ${data.id}`)
+    updateMutation.mutate({
+      id: data.id,
+      is_done: !data.is_done,
+      activity_id: activity_id,
+    })
   }
-
+  
   return (
     <>
       <Label htmlFor="name">
@@ -101,7 +100,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
             <button
               key={index}
               className={cn(
-                "grid justify-center items-center rounded-md px-1 py-2 text-sm font-medium space-y-1",
+                "grid justify-center items-center rounded-md px-1 py-2 text-sm font-medium space-y-1 transition-colors",
                 isDayActivity(day)
                   ? isDayActivity(day)?.is_done
                     ? "hover:bg-primary/90 bg-primary shadow"
@@ -109,7 +108,13 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
                   : "hover:bg-card/90 hover:shadow"
               )}
               onClick={() =>
-                onSubmit(isDayActivity(day)?.id, isDayActivity(day)?.is_done)
+                isDayActivity(day)?.id !== undefined &&
+                isDayActivity(day)?.is_done !== undefined &&
+                onSubmit({
+                  id: isDayActivity(day)?.id!,
+                  is_done: isDayActivity(day)?.is_done!,
+                  activity_id: activity_id,
+                })
               }
             >
               <div className="text-center">{week_days.at(index)}</div>
