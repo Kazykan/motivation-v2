@@ -19,36 +19,37 @@ import { useMemo, useState } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
 import { Switch } from "./ui/switch"
+import { useSwitchEdit } from "@/store/switch_edit"
+import { stat } from "fs"
 
 export function TabsLayout() {
-  const tgUserId = useTgUser((state) => state.tgUserId)
-  const child = useChildQuery(tgUserId!)
   const setChildId = useChild((state) => state.setChildId)
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
   const currentWeek = useWeek((state) => state.current_week)
+  const isSwitch = useSwitchEdit((state) => state.isEdit)
+  const setIsSwitch = useSwitchEdit((state) => state.setIsEdit)
   const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
-  const [switchStatus, setSwitchStatus] = useState(false)
-
+  const tgUserId = useTgUser((state) => state.tgUserId)
+  
+  const child = useChildQuery(tgUserId, !!tgUserId)
   // Получаем id ребенка, если он есть, и сохраняем его
-  if (child.data !== null && child.data !== undefined) {
+  if (child?.data !== null && child?.data !== undefined && child) {
     setChildId(child.data.id)
   }
 
-  function toggleSwitch() {
-    setSwitchStatus((status) => !status)
-    console.log(`change switch status to ${switchStatus}`)
-  }
 
-  const activities = useActivityQuery(child.data?.id!)
+  const activities = useActivityQuery(child?.data?.id)
+
   const sumActivitiesDays = useActivitySumDone(
-    child.data?.id!,
+    child?.data?.id,
     startOfDate,
     endOfWeek
   )
 
   const sumAllActivitiesCost = useMemo(() => {
+    console.log(`sumAllActivitiesCost`)
     return (
       activities.data?.reduce((sum, activity) => sum + activity.cost, 0) || 0
     )
@@ -72,11 +73,11 @@ export function TabsLayout() {
         <Card>
           <CardHeader>
             <div className="flex justify-between">
-              <CardTitle>{child.data?.name}</CardTitle>
+              <CardTitle>{child?.data?.name}</CardTitle>
               <div className="flex items-center space-x-2">
                 <Switch
-                  checked={switchStatus}
-                  onCheckedChange={() => toggleSwitch()}
+                  checked={isSwitch}
+                  onCheckedChange={() => setIsSwitch()}
                 />
                 <Label>Вкл. редак.</Label>
               </div>

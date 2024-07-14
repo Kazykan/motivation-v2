@@ -6,14 +6,13 @@ import { IWebApp } from "./telegram/t.types"
 import { useChildQuery } from "./hooks/useChildQuery"
 import { CarouselDApiDemo } from "./components/carousel-layout"
 import { DialogAddUser } from "./components/dialog"
+import { Body } from "./components/body"
 
 function App() {
-  const tgUserId = useTgUser((state) => state.tgUserId)
   const setTgUserId = useTgUser((state) => state.setTgUserId)
   const setTgUserName = useTgUser((state) => state.setFirstName)
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
-
-  const child = useChildQuery(tgUserId!)
+  const tgUserId = useTgUser((state) => state.tgUserId)
 
   useEffect(() => {
     const telegram = (window as any).Telegram.WebApp
@@ -37,34 +36,35 @@ function App() {
       setTgUserId(tg.user?.id)
       setTgUserName(tg.user?.first_name)
     }
-    
+  }, [tg.user?.id])
 
-  }, [webApp?.initDataUnsafe?.user?.id])
+  const child = useChildQuery(tgUserId, !!tgUserId)
 
   return (
     <>
       <Navbar />
-      {child.data ? (
-        <div>
-          <TabsLayout />
-        </div>
-      ) : (
+      {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
-          <div className="flex justify-center items-center relative mt-3">
-            <CarouselDApiDemo />
-          </div>
-          {tgUserId && (
-            <div className="flex justify-center items-center relative mb-3">
-              {tgUserId && <DialogAddUser />}
+          {child.data ? (
+            <div>
+              <TabsLayout />
             </div>
+          ) : (
+            <>
+              <div className="flex justify-center items-center relative mt-3">
+                <CarouselDApiDemo />
+              </div>
+              {tgUserId && (
+                <div className="flex justify-center items-center relative mb-3">
+                  {tgUserId && <DialogAddUser />}
+                </div>
+              )}
+            </>
           )}
         </>
       )}
 
-      {tg?.user?.photo_url && (
-        <img src={tg.user.photo_url} alt="User Photo" />
-      )}
-
+      {tg?.user?.photo_url && <img src={tg.user.photo_url} alt="User Photo" />}
     </>
   )
 }
