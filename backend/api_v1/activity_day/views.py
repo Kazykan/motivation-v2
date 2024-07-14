@@ -67,7 +67,7 @@ async def update_activity_day(
     )
 
 
-@router.patch("/{activity_day_id}/")
+@router.patch("/{id}/")
 async def update_activity_day_partial(
     activity_day_update: ActivityDayUpdatePartial,
     activity_day: ActivityDay = Depends(activity_day_by_id),
@@ -81,7 +81,7 @@ async def update_activity_day_partial(
     )
 
 
-@router.delete("/{activity_day_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_activity_day(
     activity_day: ActivityDay = Depends(activity_day_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),

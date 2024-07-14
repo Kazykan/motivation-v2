@@ -39,9 +39,9 @@ async def get_activity_days_between_date(
 
 async def get_activity_day(
     session: AsyncSession,
-    activity_day_id: int,
+    id: int,
 ) -> Activity_day | None:
-    return await session.get(Activity_day, activity_day_id)
+    return await session.get(Activity_day, id)
 
 
 async def create_activity_day(

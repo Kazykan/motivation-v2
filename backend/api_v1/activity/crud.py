@@ -65,7 +65,7 @@ async def get_sum_done_activities(
         result_done: Result = await session.execute(stmt_activity_done)
         activ_days_done = len(result_done.scalars().all())
         if activ_days_done == 0 or activ_days == 0:
-            return 0
+            continue
         else:
             total_sum += math.ceil(activity.cost / activ_days * activ_days_done)
     return total_sum
