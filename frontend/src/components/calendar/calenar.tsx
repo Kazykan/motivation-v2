@@ -3,6 +3,8 @@ import { Label } from "@/components/ui/label"
 import { useWeek } from "@/store/week"
 import {
   useActivityDayQuery,
+  useCreateActivityDay,
+  useDeleteActivityDay,
   useUpdateActivityDayCheck,
 } from "@/hooks/useActivityDayQuery"
 import { useMemo } from "react"
@@ -10,6 +12,8 @@ import { isSameDay } from "date-fns"
 import { IActivitiesDay } from "@/store/types"
 import { Button } from "../ui/button"
 import { useSwitchEdit } from "@/store/switch_edit"
+import { useAddMTMActivityWeek, useDeleteMTMActivityWeek } from "@/hooks/useActivityQuery"
+import { number } from "zod"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
@@ -73,12 +77,17 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   }
 
   const updateMutation = useUpdateActivityDayCheck()
+  const createMutation = useCreateActivityDay()
+  const deleteMutation = useDeleteActivityDay(activity_id)
+  // const deleteMtmActivityWeek = useDeleteMTMActivityWeek()
+  // const AddMtmActivityWeek = useAddMTMActivityWeek()
+
 
   if (week_days_by_activity.data === undefined) {
     return <div>Нет заданий</div>
   }
 
-  const onSubmit = (data: Omit<IActivitiesDay, "day">) => {
+  const onSubmitUpdate = (data: Omit<IActivitiesDay, "day">) => {
     console.log(`onSubmit activity_day_id: ${data.id}`)
     console.log(`is_done: ${!data.is_done} id: ${data.id}`)
     updateMutation.mutate({
@@ -86,6 +95,17 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
       is_done: !data.is_done,
       activity_id: activity_id,
     })
+  }
+
+  const onSubmitCreate = (data: Omit<IActivitiesDay, "id" | "is_done">) => {
+    createMutation.mutate(data)
+
+
+  }
+
+  const onSubmitDelete = (data: Omit<IActivitiesDay, "is_done">) => {
+    deleteMutation.mutate(data)
+
   }
 
   return (
@@ -107,7 +127,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
         </div>
       </Label>
       <div className="dark:text-white/85 text-black/70 grid grid-cols-7 h-13 items-center justify-center rounded-lg bg-muted w-full py-1 px-1 space-x-2">
-        {week_days_by_activity.data.length > 0 &&
+        {week_days_by_activity.data &&
           current_week_days !== undefined &&
           current_week_days.map((day: Date, index: number) => (
             <button
@@ -121,13 +141,24 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
                   : "hover:bg-card/90 hover:shadow"
               )}
               onClick={() =>
-                isDayActivity(day)?.id !== undefined &&
-                isDayActivity(day)?.is_done !== undefined &&
-                onSubmit({
-                  id: isDayActivity(day)?.id!,
-                  is_done: isDayActivity(day)?.is_done!,
-                  activity_id: activity_id,
-                })
+                isSwitch
+                  ? isDayActivity(day)?.id !== undefined
+                    ? onSubmitDelete({
+                        id: isDayActivity(day)?.id!,
+                        day: day,
+                        activity_id: activity_id
+                      })
+                    : onSubmitCreate({
+                        day: day,
+                        activity_id: activity_id,
+                      })
+                  : isDayActivity(day)?.id !== undefined &&
+                    isDayActivity(day)?.is_done !== undefined &&
+                    onSubmitUpdate({
+                      id: isDayActivity(day)?.id!,
+                      is_done: isDayActivity(day)?.is_done!,
+                      activity_id: activity_id,
+                    })
               }
             >
               <div className="text-center">{week_days.at(index)}</div>

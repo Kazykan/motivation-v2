@@ -40,3 +40,40 @@ export function useUpdateActivityDayCheck() {
     },
   })
 }
+
+
+export function useCreateActivityDay() {
+  console.log("useActivityDayCheck")
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: Omit<IActivitiesDay, "id" | "is_done">) =>
+      ActivityDayService.create(data),
+    onSuccess: (data: IActivitiesDay) => {
+      queryClient.invalidateQueries({
+        queryKey: ["activity_days", { activity_id: data.activity_id }],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["sum_done"],
+      })
+    },
+  })
+}
+
+export function useDeleteActivityDay(activity_id: number) {
+  console.log("useActivityDayCheck")
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: Omit<IActivitiesDay, "is_done">) =>
+      ActivityDayService.delete(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["activity_days", { activity_id: activity_id }],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["sum_done"],
+      })
+    },
+  })
+}

@@ -21,33 +21,37 @@ export const ActivityDayService = {
     return response.data
   },
 
-  async create(activity_day_id: number, day: Date) {
+  async create(data: Omit<IActivitiesDay, "id" | "is_done">) {
     const response = await axiosInstance.post<IActivitiesDay>(
       `activity_days/`,
-      { activity_day_id, day: ConvertDate(day) }
+      { activity_id: data.activity_id, day: ConvertDate(data.day) }
     )
     return response.data
   },
 
   async update(data: Omit<IActivitiesDay, "day">) {
     console.log(`Updating activity day ${data.id} to ${data.is_done}`)
-    const response = await axiosInstance.patch<IActivitiesDay>(`activity_days/${data.id}/`, {
-      "is_done": data.is_done
-    })
+    const response = await axiosInstance.patch<IActivitiesDay>(
+      `activity_days/${data.id}/`,
+      {
+        is_done: data.is_done,
+      }
+    )
     console.log(`response.data.is_done - ${response.data.is_done}`)
     return response.data
   },
 
   async post(data: Omit<IActivitiesDay, "is_done" | "id">) {
     console.log(`post activity day - ${ConvertDate(data.day)}`)
-    const day_week: number = getISODay(data.day)
     const response = await axiosInstance.post<IActivitiesDay>(
       `activity_days/`,
       { day: ConvertDate(data.day), activity_id: data.activity_id }
     )
-    const add_week_day = await axiosInstance.post<IActivitiesWithWeek>(
-      `activities/add_week_day?activity_id=${data.activity_id}&week_id=${day_week}&add=true`
-    )
     return response.data
-  }
+  },
+
+  async delete(data: Omit<IActivitiesDay, "is_done">) {
+    const response = await axiosInstance.delete(`activity_days/${data.id}/`)
+    return response.data
+  },
 }

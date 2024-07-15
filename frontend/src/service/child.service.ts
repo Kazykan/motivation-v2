@@ -17,6 +17,6 @@ export const ChildService = {
     const response = await axiosInstance.post<
       z.infer<typeof ChildCreateSchema>
     >(`children/`, data)
-    return ChildSchema.parse(response.data)
+    return response.data
   },
 }

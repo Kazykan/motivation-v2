@@ -24,12 +24,11 @@ export function ActivityForm() {
   const ChildId = useChild((state) => state.ChildId)
 
   const form = useForm<Omit<IActivities, "id">>({
-    resolver: zodResolver(ActivityCreateSchema),
+    // resolver: zodResolver(ActivityCreateSchema),
     defaultValues: {
       percent_complete: 0,
       max_cost: 0,
       child_id: ChildId!,
-      cost: 100,
     },
   })
 
@@ -44,8 +43,10 @@ export function ActivityForm() {
   })
 
   function onSubmit(values: Omit<IActivities, "id">) {
-    // console.log("onSubmit")
-    mutation.mutate(values)
+    const temp = {...values, cost: Number(values.cost)
+    }
+    console.log(temp)
+    mutation.mutate(temp)
   }
 
   return (
@@ -59,43 +60,41 @@ export function ActivityForm() {
               <FormItem>
                 <FormLabel>Имя задания</FormLabel>
                 <FormControl>
-                  <Input {...field("name")} value={field.value ?? "аываы"} />
+                  <Input {...field} value={field.value ?? "аываы"} />
                 </FormControl>
 
                 <FormMessage />
               </FormItem>
             )}
           />
-          {/* <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Описание задания</FormLabel>
-              <FormControl>
-                <Input {...field} value={field.value ?? ""} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-          {/* <FormField
-          control={form.control}
-          name="cost"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Стоимость</FormLabel>
-              <FormControl>
-                <Input {...field} value={field.value ?? ""} />
-              </FormControl>
-              <FormDescription>
-
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Описание задания</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value ?? ""} />
+                </FormControl>
+                <FormDescription></FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="cost"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Стоимость</FormLabel>
+                <FormControl>
+                  <Input {...field} type="number" />
+                </FormControl>
+                <FormDescription></FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type="submit">Добавить</Button>
         </form>
       </Form>

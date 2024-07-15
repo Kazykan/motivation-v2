@@ -46,6 +46,7 @@ export function ProfileForm() {
       ChildService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["child"] })
+      window.location.reload()
     },
   })
 

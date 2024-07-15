@@ -86,4 +86,8 @@ async def delete_activity_day(
     activity_day: ActivityDay = Depends(activity_day_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> None:
-    await crud.delete_activity_day(session=session, activity_day=activity_day)
+    result = await crud.delete_activity_day(session=session, activity_day=activity_day)
+    if result:
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT)
+    else:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

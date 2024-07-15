@@ -1,8 +1,9 @@
 import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.models import Activity_day
+from core.models import Activity_day, Week, Activity
 from sqlalchemy.engine import Result
 from sqlalchemy import and_, select
+from sqlalchemy.orm import selectinload
 
 from .schemas import ActivityDayCreate, ActivityDayUpdate, ActivityDayUpdatePartial
 
@@ -49,9 +50,29 @@ async def create_activity_day(
     activity_day_in: ActivityDayCreate,
 ) -> Activity_day:
     activity_day = Activity_day(**activity_day_in.model_dump())
-    session.add(activity_day)
-    await session.commit()
-    return activity_day
+    try:
+        session.add(activity_day)
+        activity = await session.get(Activity, activity_day.activity_id)
+        # Проверяем наличие активности
+        if activity is not None:
+            # Получаем данные по дню недели
+            week_day = await session.scalars(
+                select(Week)
+                .where(Week.id == datetime.date.isoweekday(activity_day.day))
+                .options(
+                    selectinload(Week.activities),
+                ),
+            )
+            # Проверяем наличие дня недели
+            if week_day is not None:
+                week_day_first = week_day.first()
+                week_day_first.activities.append(activity)
+    except:
+        session.rollback()
+        return False
+    else:
+        await session.commit()
+        return activity_day
 
 
 async def update_activity_day(
@@ -71,5 +92,26 @@ async def delete_activity_day(
     session: AsyncSession,
     activity_day: Activity_day,
 ) -> None:
-    await session.delete(activity_day)
-    await session.commit()
+    try:  # Пробуем удалить задание на день и привязку активности к дню недели
+        await session.delete(activity_day)
+        activity = await session.get(Activity, activity_day.activity_id)
+        # Проверяем наличие активности
+        if activity is not None:
+            # Получаем данные по дню недели
+            week_day = await session.scalars(
+                select(Week)
+                .where(Week.id == datetime.date.isoweekday(activity_day.day))
+                .options(
+                    selectinload(Week.activities),
+                ),
+            )
+            # Проверяем наличие дня недели
+            if week_day is not None:
+                week_day_first = week_day.first()
+                week_day_first.activities.remove(activity)
+    except:  # Если не успешно откатываем изменения
+        session.rollback()
+        return False
+    else:  # Если успешно записываем в бд
+        await session.commit()
+        return True

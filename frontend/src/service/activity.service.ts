@@ -1,7 +1,8 @@
-import { ActivityCreateSchema, IActivities } from "@/store/types"
+import { ActivityCreateSchema, IActivities, IActivitiesDay, IActivitiesWithWeek } from "@/store/types"
 import { axiosInstance } from "./api"
 import { ConvertDate } from "./date"
 import { z } from "zod"
+import { getISODay } from "date-fns"
 
 export const ActivityService = {
   async get(child_id: number | undefined | null) {
@@ -40,4 +41,20 @@ export const ActivityService = {
     (`activities/`, data)
     return response.data
   },
+
+  async delete_mtm_week(data: Omit<IActivitiesDay, "is_done">) {
+    const day_week: number = getISODay(data.day)
+    const delete_week_day = await axiosInstance.post<IActivitiesWithWeek>(
+      `activities/add_week_day?activity_id=${data.activity_id}&week_id=${day_week}&add=${false}`
+    )
+    return delete_week_day.data
+  },
+
+  async add_mtm_week(data: Omit<IActivitiesDay, "id" | "is_done">) {
+    const day_week: number = getISODay(data.day)
+    const delete_week_day = await axiosInstance.post<IActivitiesWithWeek>(
+      `activities/add_week_day?activity_id=${data.activity_id}&week_id=${day_week}&add=${true}`
+    )
+    return delete_week_day.data
+  }
 }
