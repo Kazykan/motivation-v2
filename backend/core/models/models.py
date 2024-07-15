@@ -31,8 +31,8 @@ child_mtm_parent = Table(
 activity_mtm_week = Table(
     "activity_mtm_week",
     Base.metadata,
-    Column("activity_id", ForeignKey("activity.id")),
-    Column("week_id", ForeignKey("week.id")),
+    Column("activity_id", ForeignKey("activity.id"), unique=True),
+    Column("week_id", ForeignKey("week.id"), unique=True),
 )
 
 

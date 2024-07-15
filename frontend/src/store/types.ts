@@ -32,6 +32,15 @@ export const ChildCreateSchema = z.object({
   max_payout: z.number().nullable(),
 })
 
+export const ActivityCreateSchema = z.object({
+  name: z.string(),
+  title: z.string().nullable(),
+  percent_complete: z.number().nullable(),
+  cost: z.number(),
+  max_cost: z.number().nullable(),
+  child_id: z.number()
+})
+
 
 export interface IParent {
   id: number
@@ -50,6 +59,17 @@ export interface IActivities {
   cost: number
   max_cost?: number | null
   child_id: number
+}
+
+export interface IActivitiesWithWeek {
+  id: number
+  name: string
+  title?: string | null
+  percent_complete?: number
+  cost: number
+  max_cost?: number | null
+  child_id: number
+  weeks: IWeek[]
 }
 
 export interface IActivitiesDay {

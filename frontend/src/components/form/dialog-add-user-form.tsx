@@ -20,11 +20,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select"
+} from "../ui/select"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { ChildService } from "@/service/child.service"
 import { ChildCreateSchema } from "@/store/types"
-
 
 export function ProfileForm() {
   const tgUserId = useTgUser((state) => state.tgUserId)
@@ -43,7 +42,8 @@ export function ProfileForm() {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: (data: z.infer<typeof ChildCreateSchema>) => ChildService.create(data),
+    mutationFn: (data: z.infer<typeof ChildCreateSchema>) =>
+      ChildService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["child"] })
     },

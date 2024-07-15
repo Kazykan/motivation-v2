@@ -8,6 +8,8 @@ import {
 import { useMemo } from "react"
 import { isSameDay } from "date-fns"
 import { IActivitiesDay } from "@/store/types"
+import { Button } from "../ui/button"
+import { useSwitchEdit } from "@/store/switch_edit"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
@@ -20,7 +22,7 @@ interface WeekdaysProps {
 export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
-  
+  const isSwitch = useSwitchEdit((state) => state.isEdit)
 
   const get_current_week_days = useMemo((): Date[] | undefined => {
     if (startOfDate !== undefined && startOfDate !== null) {
@@ -42,7 +44,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
     endOfWeek
   )
 
-  const isDayActivity = (day: Data) => 
+  const isDayActivity = (day: Data) =>
     week_days_by_activity.data?.find((_, index) =>
       isSameDay(day, week_days_by_activity.data![index].day)
     )
@@ -71,13 +73,12 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   }
 
   const updateMutation = useUpdateActivityDayCheck()
-  
+
   if (week_days_by_activity.data === undefined) {
     return <div>Нет заданий</div>
   }
 
   const onSubmit = (data: Omit<IActivitiesDay, "day">) => {
-    
     console.log(`onSubmit activity_day_id: ${data.id}`)
     console.log(`is_done: ${!data.is_done} id: ${data.id}`)
     updateMutation.mutate({
@@ -86,12 +87,24 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
       activity_id: activity_id,
     })
   }
-  
+
   return (
     <>
       <Label htmlFor="name">
-        {activity_name} {sum_cost()}р. /{" "}
-        <span className="text-black/70 dark:text-white/35">{cost}р.</span>
+        <div className="flex justify-between items-center">
+          <div>
+            {activity_name} {sum_cost()}р. /{" "}
+            <span className="text-black/70 dark:text-white/35">{cost}р.</span>
+          </div>
+          <div>
+            {isSwitch && (
+              <>
+                <Button variant="link">Ред.</Button>
+                <Button variant="link">Удалить</Button>
+              </>
+            )}
+          </div>
+        </div>
       </Label>
       <div className="dark:text-white/85 text-black/70 grid grid-cols-7 h-13 items-center justify-center rounded-lg bg-muted w-full py-1 px-1 space-x-2">
         {week_days_by_activity.data.length > 0 &&

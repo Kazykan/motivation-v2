@@ -1,0 +1,105 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm, FormState } from "react-hook-form"
+import { z } from "zod"
+
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { ActivityCreateSchema, IActivities } from "@/store/types"
+import { useChild } from "@/store/user"
+import { ActivityService } from "@/service/activity.service"
+import { useState } from "react"
+
+export function ActivityForm() {
+  const [info, setInfo] = useState<string | undefined>(undefined)
+  const ChildId = useChild((state) => state.ChildId)
+
+  const form = useForm<Omit<IActivities, "id">>({
+    resolver: zodResolver(ActivityCreateSchema),
+    defaultValues: {
+      percent_complete: 0,
+      max_cost: 0,
+      child_id: ChildId!,
+      cost: 100,
+    },
+  })
+
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: (data: Omit<IActivities, "id">) => ActivityService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["activities", ChildId] })
+      setInfo((_) => "Задние добавлено, закройте окно или введите новое задние")
+    },
+  })
+
+  function onSubmit(values: Omit<IActivities, "id">) {
+    // console.log("onSubmit")
+    mutation.mutate(values)
+  }
+
+  return (
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Имя задания</FormLabel>
+                <FormControl>
+                  <Input {...field("name")} value={field.value ?? "аываы"} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Описание задания</FormLabel>
+              <FormControl>
+                <Input {...field} value={field.value ?? ""} />
+              </FormControl>
+              <FormDescription></FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+          {/* <FormField
+          control={form.control}
+          name="cost"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Стоимость</FormLabel>
+              <FormControl>
+                <Input {...field} value={field.value ?? ""} />
+              </FormControl>
+              <FormDescription>
+
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+          <Button type="submit">Добавить</Button>
+        </form>
+      </Form>
+      {info && <span className="text-destructive">{info}</span>}
+    </>
+  )
+}

@@ -20,7 +20,12 @@ import { useActivityQuery } from "@/hooks/useActivityQuery"
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
 import { Switch } from "./ui/switch"
 import { useSwitchEdit } from "@/store/switch_edit"
-import { stat } from "fs"
+import {
+  EnvelopeOpenIcon,
+  PlusIcon,
+  PlusCircledIcon,
+} from "@radix-ui/react-icons"
+import { DialogAddActivity } from "./form/dialog-add-activity"
 
 export function TabsLayout() {
   const setChildId = useChild((state) => state.setChildId)
@@ -32,13 +37,12 @@ export function TabsLayout() {
   const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
   const tgUserId = useTgUser((state) => state.tgUserId)
-  
+
   const child = useChildQuery(tgUserId, !!tgUserId)
   // Получаем id ребенка, если он есть, и сохраняем его
   if (child?.data !== null && child?.data !== undefined && child) {
     setChildId(child.data.id)
   }
-
 
   const activities = useActivityQuery(child?.data?.id)
 
@@ -89,7 +93,6 @@ export function TabsLayout() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-
             {startOfDate && endOfWeek && activities.data !== undefined && (
               <>
                 {activities.data?.length > 0 &&
@@ -105,9 +108,11 @@ export function TabsLayout() {
               </>
             )}
           </CardContent>
-          <CardFooter>
-            <Button>Save changes</Button>
-          </CardFooter>
+          {(activities.data?.length == 0 || isSwitch) && (
+            <CardFooter>
+              <DialogAddActivity />
+            </CardFooter>
+          )}
         </Card>
       </TabsContent>
       <TabsContent value="password">

@@ -8,26 +8,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ProfileForm } from "./register-user-form"
+import { PlusCircledIcon } from "@radix-ui/react-icons"
+import { ActivityForm } from "./dialog-add-activity-form"
 
-export function DialogAddUser() {
+export function DialogAddActivity() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Регистрация</Button>
+        <Button>
+          <PlusCircledIcon className="mr-2 h-5 w-5" />
+          Добавить задние
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] rounded-xl">
         <DialogHeader>
-          <DialogTitle>Регистрация</DialogTitle>
+          <DialogTitle>Добавить задание</DialogTitle>
           <DialogDescription>
-            Создание пользователя для начала работы.
+            Добавить задние для ребенка.
           </DialogDescription>
         </DialogHeader>
-
-        <ProfileForm />
-        {/* <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter> */}
+        <ActivityForm />
       </DialogContent>
     </Dialog>
   )

@@ -1,7 +1,8 @@
-import { IActivitiesDay } from "@/store/types"
+import { IActivitiesDay, IActivitiesWithWeek } from "@/store/types"
 import { axiosInstance } from "./api"
 import { ConvertDate } from "./date"
 import { create } from "domain"
+import { getISODay } from "date-fns"
 
 export const ActivityDayService = {
   async get_period(
@@ -34,6 +35,19 @@ export const ActivityDayService = {
       "is_done": data.is_done
     })
     console.log(`response.data.is_done - ${response.data.is_done}`)
+    return response.data
+  },
+
+  async post(data: Omit<IActivitiesDay, "is_done" | "id">) {
+    console.log(`post activity day - ${ConvertDate(data.day)}`)
+    const day_week: number = getISODay(data.day)
+    const response = await axiosInstance.post<IActivitiesDay>(
+      `activity_days/`,
+      { day: ConvertDate(data.day), activity_id: data.activity_id }
+    )
+    const add_week_day = await axiosInstance.post<IActivitiesWithWeek>(
+      `activities/add_week_day?activity_id=${data.activity_id}&week_id=${day_week}&add=true`
+    )
     return response.data
   }
 }

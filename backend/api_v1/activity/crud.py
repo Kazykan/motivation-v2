@@ -116,7 +116,7 @@ async def add_activity_week_relationship(
     # Проверяем наличие активности
     if activity is not None:
         # Получаем данные по дню недели
-        week_day = await session.scalar(
+        week_day = await session.scalars(
             select(Week)
             .where(Week.id == week_id)
             .options(
@@ -125,10 +125,11 @@ async def add_activity_week_relationship(
         )
         # Проверяем наличие дня недели
         if week_day is not None:
+            week_day_first = week_day.first()
             if add:
-                week_day.activities.append(activity)
+                week_day_first.activities.append(activity)
             else:
-                week_day.activities.remove(activity)
+                week_day_first.activities.remove(activity)
             await session.commit()
             activity = await get_activity_by_id(session, activity_id)
             return activity
