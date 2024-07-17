@@ -6,7 +6,6 @@ import { IWebApp } from "./telegram/t.types"
 import { useChildQuery } from "./hooks/useChildQuery"
 import { CarouselDApiDemo } from "./components/carousel-layout"
 import { DialogAddUser } from "./components/form/dialog-add-user"
-import { Body } from "./components/body"
 
 function App() {
   const setTgUserId = useTgUser((state) => state.setTgUserId)
