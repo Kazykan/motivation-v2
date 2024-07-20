@@ -113,18 +113,8 @@ async def get_activity_by_id(
     )
 
 
-@router.put("/{transfer_id}/")
-async def update_transfer(
-    transfer_update: ActivityUpdate,
-    transfer: Activity = Depends(activity_by_id),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    return await crud.update_activity(
-        session=session, transfer=transfer, transfer_update=transfer_update
-    )
 
-
-@router.patch("/{transfer_id}/")
+@router.patch("/{activity_id}/")
 async def update_transfer_partial(
     transfer_update: ActivityUpdatePartial,
     transfer: Activity = Depends(activity_by_id),
@@ -138,7 +128,7 @@ async def update_transfer_partial(
     )
 
 
-@router.delete("/{transfer_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{activity_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_transfer(
     transfer: Activity = Depends(activity_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),

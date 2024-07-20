@@ -79,23 +79,6 @@ async def create_expense(
     )
 
 
-# @router.post(
-#     "/child_parents",
-#     response_model=Child,
-#     status_code=status.HTTP_201_CREATED,
-# )
-# async def add_child_parents_relationship(
-#     child_id: int,
-#     parents_ids: list[int],
-#     session: AsyncSession = Depends(db_helper.session_dependency),
-# ):
-#     return await crud.add_child_parents_relationship(
-#         session=session,
-#         child_id=child_id,
-#         parents_ids=parents_ids,
-#     )
-
-
 @router.post(
     "/add_child_parent",
     response_model=ChildSchema,
@@ -119,17 +102,6 @@ async def add_child_parent_relationship(
             detail=f"Child {child_id} not found!",
         )
     return result
-
-
-@router.put("/{child_id}/")
-async def update_child(
-    child_update: ChildUpdate,
-    child: Child = Depends(child_by_id),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    return await crud.update_children(
-        session=session, child=child, child_update=child_update
-    )
 
 
 @router.patch("/{child_id}/")

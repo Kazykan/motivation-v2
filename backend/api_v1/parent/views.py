@@ -52,17 +52,6 @@ async def create_parent(
     )
 
 
-@router.put("/{parent_id}/")
-async def update_parent(
-    parent_update: ParentUpdate,
-    parent: Parent = Depends(parent_by_id),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    return await crud.update_parent(
-        session=session, parent=parent, parent_update=parent_update
-    )
-
-
 @router.patch("/{parent_id}/")
 async def update_parent_partial(
     parent_update: ParentUpdatePartial,
