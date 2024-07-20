@@ -1,0 +1,26 @@
+import { Button } from "@/components/ui/button"
+import { useDeleteActivity } from "@/hooks/useActivityQuery"
+import { ActivityDeleteProps } from "@/store/types"
+import { useChild } from "@/store/user"
+
+export function DeleteActivityForm({
+  activity_id,
+  setIsOpen,
+}: ActivityDeleteProps) {
+  const deleteActivity = useDeleteActivity({ activity_id, setIsOpen })
+
+  function onSubmit() {
+    deleteActivity.mutate(activity_id)
+  }
+
+  return (
+    <>
+      <div className="flex justify-center space-x-3">
+        <Button variant="destructive" onClick={() => onSubmit()}>
+          Удалить
+        </Button>
+        <Button onClick={() => setIsOpen(false)}>Отмена</Button>
+      </div>
+    </>
+  )
+}

@@ -1,6 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, FormState } from "react-hook-form"
-import { z } from "zod"
+import { useForm } from "react-hook-form"
+
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,22 +13,36 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { ActivityCreateSchema, IActivities } from "@/store/types"
+import { IActivities } from "@/store/types"
 import { useChild } from "@/store/user"
 import { ActivityService } from "@/service/activity.service"
-import { useState } from "react"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-export function ActivityForm() {
-  const [info, setInfo] = useState<string | undefined>(undefined)
+interface ActivityProps {
+  setIsOpen: (isOpen: boolean) => void
+}
+
+const activitySchema = z.object({
+  name: z.string().min(1, "Имя задания обязательно"),
+  title: z.string().min(1, "Описание задания обязательно"),
+  cost: z.string().min(1, "Стоимость должна быть неотрицательной"),
+  percent_complete: z.number().min(0, "Процент выполнения должен быть неотрицательным"),
+  max_cost: z.number().min(0, "Максимальная стоимость должна быть неотрицательной"),
+  child_id: z.number().positive("ID ребенка должен быть положительным"),
+})
+
+
+export function ActivityForm({ setIsOpen }: ActivityProps) {
   const ChildId = useChild((state) => state.ChildId)
 
   const form = useForm<Omit<IActivities, "id">>({
-    // resolver: zodResolver(ActivityCreateSchema),
     defaultValues: {
       percent_complete: 0,
       max_cost: 0,
       child_id: ChildId!,
     },
+    resolver: zodResolver(activitySchema),
   })
 
   const queryClient = useQueryClient()
@@ -38,21 +51,19 @@ export function ActivityForm() {
     mutationFn: (data: Omit<IActivities, "id">) => ActivityService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["activities", ChildId] })
-      setInfo((_) => "Задние добавлено, закройте окно или введите новое задние")
+      setIsOpen(false)
     },
   })
 
   function onSubmit(values: Omit<IActivities, "id">) {
-    const temp = {...values, cost: Number(values.cost)
-    }
-    console.log(temp)
+    const temp = { ...values, cost: Number(values.cost) }
     mutation.mutate(temp)
   }
 
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 text-foreground">
           <FormField
             control={form.control}
             name="name"
@@ -60,7 +71,7 @@ export function ActivityForm() {
               <FormItem>
                 <FormLabel>Имя задания</FormLabel>
                 <FormControl>
-                  <Input {...field} value={field.value ?? "аываы"} />
+                  <Input {...field} value={field.value ?? ""} />
                 </FormControl>
 
                 <FormMessage />
@@ -98,7 +109,6 @@ export function ActivityForm() {
           <Button type="submit">Добавить</Button>
         </form>
       </Form>
-      {info && <span className="text-destructive">{info}</span>}
     </>
   )
 }
