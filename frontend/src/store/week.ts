@@ -17,7 +17,7 @@ export const useWeek = create<WeekState>((set) => ({
   end_of_week: null,
 
   setCurrentWeek: (current_week: Date | undefined) =>
-    set({ start_of_date: current_week }),
+    set({ current_week: current_week }),
 
   setStartOfWeek: async (current_week: Date | undefined) => {
     if (current_week === undefined) {
