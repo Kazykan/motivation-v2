@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { TabsLayout } from "./components/Tabs-layout"
+import { TabsLayout } from "./components/Tab-layout/Tabs-layout"
 import { Navbar } from "./Navbar/navbar"
 import { useTgUser } from "./store/tg_user"
 import { IWebApp } from "./telegram/t.types"
