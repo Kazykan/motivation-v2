@@ -27,3 +27,10 @@ export function ConvertDate(date: Date): string {
   const convertDate = lightFormat(date, "yyyy-MM-dd")
   return convertDate
 }
+
+export function ShortDate(date: Date): string {
+  const shortDate = `${date.getDate()} ${date
+    .toLocaleDateString("ru", { month: "short" })
+    .substring(0, 3)}`
+  return shortDate
+}

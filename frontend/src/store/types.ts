@@ -42,6 +42,12 @@ export const ActivityCreateSchema = z.object({
 })
 
 
+export interface ActivityDeleteProps {
+  activity_id: number
+  setIsOpen: (isOpen: boolean) => void
+}
+
+
 export interface IParent {
   id: number
   bot_user_id?: number

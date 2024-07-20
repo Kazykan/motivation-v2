@@ -1,8 +1,6 @@
-import { ActivityCreateSchema, IActivities, IActivitiesDay, IActivitiesWithWeek } from "@/store/types"
+import { IActivities } from "@/store/types"
 import { axiosInstance } from "./api"
 import { ConvertDate } from "./date"
-import { z } from "zod"
-import { getISODay } from "date-fns"
 
 export const ActivityService = {
   async get(child_id: number | undefined | null) {
@@ -29,7 +27,9 @@ export const ActivityService = {
       return undefined
     }
     const response = await axiosInstance.get<number>(
-        `activities/sum_is_done?day_start=${ConvertDate(day_start)}&day_end=${ConvertDate(day_end)}&child_id=${child_id}`
+      `activities/sum_is_done?day_start=${ConvertDate(
+        day_start
+      )}&day_end=${ConvertDate(day_end)}&child_id=${child_id}`
     )
     return response.data
   },
@@ -37,24 +37,15 @@ export const ActivityService = {
   async create(data: Omit<IActivities, "id">) {
     console.log(`ActivityService.create`)
     console.log(data)
-    const response = await axiosInstance.post<Omit<IActivities, "id">>
-    (`activities/`, data)
+    const response = await axiosInstance.post<Omit<IActivities, "id">>(
+      `activities/`,
+      data
+    )
     return response.data
   },
 
-  async delete_mtm_week(data: Omit<IActivitiesDay, "is_done">) {
-    const day_week: number = getISODay(data.day)
-    const delete_week_day = await axiosInstance.post<IActivitiesWithWeek>(
-      `activities/add_week_day?activity_id=${data.activity_id}&week_id=${day_week}&add=${false}`
-    )
-    return delete_week_day.data
+  async delete(activity_id: number) {
+    const response = await axiosInstance.delete(`activities/${activity_id}/`)
+    return response.data
   },
-
-  async add_mtm_week(data: Omit<IActivitiesDay, "id" | "is_done">) {
-    const day_week: number = getISODay(data.day)
-    const delete_week_day = await axiosInstance.post<IActivitiesWithWeek>(
-      `activities/add_week_day?activity_id=${data.activity_id}&week_id=${day_week}&add=${true}`
-    )
-    return delete_week_day.data
-  }
 }
