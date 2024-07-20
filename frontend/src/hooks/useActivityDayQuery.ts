@@ -1,12 +1,10 @@
 import { ActivityDayService } from "@/service/activity_day.service"
 import { IActivitiesDay } from "@/store/types"
+import { useWeek } from "@/store/week"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-interface ActivityDayPromise {
-  activity_id: number
-  day_start: Date | null
-  day_end: Date | null
-}
+// const startOfDate = useWeek((state) => state.start_of_date)
+// const endOfWeek = useWeek((state) => state.end_of_week)
 
 const useActivityDayQuery = (
   activity_id: number,
@@ -16,7 +14,10 @@ const useActivityDayQuery = (
   return useQuery({
     queryFn: () =>
       ActivityDayService.get_period(activity_id, day_start, day_end),
-    queryKey: ["activity_days", { activity_id: activity_id }],
+    queryKey: [
+      "activity_days",
+      { activity_id: activity_id, day_start: day_start, day_end: day_end },
+    ],
     enabled: activity_id !== null && day_start !== null && day_end !== null,
   })
 }
@@ -40,7 +41,6 @@ export function useUpdateActivityDayCheck() {
     },
   })
 }
-
 
 export function useCreateActivityDay() {
   console.log("useActivityDayCheck")
