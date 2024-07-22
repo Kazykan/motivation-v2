@@ -21,6 +21,18 @@ export const WeekDay = {
       return end_of_week
     }
   },
+
+  comparison_current_date(currentWeek: Date | undefined): boolean {
+    if (currentWeek === undefined) {
+      return false
+    } else {
+      const current_week_day = currentWeek.setHours(0, 0, 0, 0)
+      const this_day = new Date().setHours(0, 0, 0, 0)
+      if (current_week_day === this_day) {
+        return false
+      } else return true
+    }
+  },
 }
 
 export function ConvertDate(date: Date): string {

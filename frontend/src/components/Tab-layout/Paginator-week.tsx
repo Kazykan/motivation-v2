@@ -7,18 +7,19 @@ import {
   PaginationNext,
   PaginationNextDisable,
   PaginationPrevious,
+  PaginationPreviousDisable,
 } from "@/components/ui/pagination"
-import { ShortDate } from "@/service/date"
+import { ShortDate, WeekDay } from "@/service/date"
+import { useSwitchEdit } from "@/store/switch_edit"
 import { useWeek } from "@/store/week"
 import { addDays } from "date-fns"
-import { useState } from "react"
 
 export function PaginationWeeks() {
-  const [isNext, setIsNext] = useState<boolean>(true)
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
   const setCurrentWeek = useWeek(state => state.setCurrentWeek)
   const currentWeek = useWeek((state) => state.current_week)
+  const isSwitch = useSwitchEdit((state) => state.isEdit)
 
   function setCurrentDay(set: boolean) {
     let day: Date
@@ -38,21 +39,27 @@ export function PaginationWeeks() {
     setCurrentWeek(nextWeek)
   }
 
-
+  const isNextWeek = WeekDay.comparison_current_date(currentWeek)
 
 
   return (
     <Pagination className="mt-3">
       <PaginationContent>
-        <PaginationItem className="disaple">
+        {isSwitch ? 
+        <PaginationItem>
+        <PaginationPreviousDisable />
+      </PaginationItem>
+        :
+        <PaginationItem>
           <PaginationPrevious onClick={() => setCurrentDay(false)} href="#" />
         </PaginationItem>
+      }
         <PaginationItem>
           {startOfDate &&
             endOfWeek &&
             `${ShortDate(startOfDate)} - ${ShortDate(endOfWeek)}`}
         </PaginationItem>
-        {currentWeek!.getTime() < endOfWeek!.getTime() ? (
+        {isNextWeek ? (
           <PaginationItem>
             <PaginationNext onClick={() => setCurrentDay(true)} href="#" />
           </PaginationItem>

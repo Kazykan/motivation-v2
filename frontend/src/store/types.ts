@@ -38,14 +38,14 @@ export const ActivityCreateSchema = z.object({
   percent_complete: z.number().nullable(),
   cost: z.number(),
   max_cost: z.number().nullable(),
-  child_id: z.number()
+  child_id: z.number(),
 })
 
-
-export interface ActivityDeleteProps {
+export interface ActivityChangeProps {
   activity_id: number
   setIsOpen: (isOpen: boolean) => void
 }
+
 
 
 export interface IParent {
@@ -83,6 +83,17 @@ export interface IActivitiesDay {
   day: Date
   activity_id: number
   id: number
+}
+
+export interface IActivitiesPatch {
+  id: number
+  name: string
+  title?: string | null
+  percent_complete?: number
+  cost: number
+  max_cost?: number | null
+  child_id: number
+  setIsOpen: (isOpen: boolean) => void
 }
 
 export interface IWeek {

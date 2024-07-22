@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button"
 import { useDeleteActivity } from "@/hooks/useActivityQuery"
-import { ActivityDeleteProps } from "@/store/types"
+import { ActivityChangeProps } from "@/store/types"
 import { useChild } from "@/store/user"
 
 export function DeleteActivityForm({
   activity_id,
   setIsOpen,
-}: ActivityDeleteProps) {
+}: ActivityChangeProps) {
   const deleteActivity = useDeleteActivity({ activity_id, setIsOpen })
 
   function onSubmit() {

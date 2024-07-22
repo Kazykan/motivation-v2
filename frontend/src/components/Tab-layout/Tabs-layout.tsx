@@ -33,6 +33,7 @@ export function TabsLayout() {
   const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
   const tgUserId = useTgUser((state) => state.tgUserId)
+  const setCurrentWeek = useWeek(state => state.setCurrentWeek)
 
   const child = useChildQuery(tgUserId, !!tgUserId)
   // Получаем id ребенка, если он есть, и сохраняем его
@@ -77,7 +78,11 @@ export function TabsLayout() {
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={isSwitch}
-                  onCheckedChange={() => setIsSwitch()}
+                  onCheckedChange={() => {
+                    setIsSwitch()
+                    setCurrentWeek(undefined)
+                  
+                  }}
                 />
                 <Label>Вкл. редак.</Label>
               </div>

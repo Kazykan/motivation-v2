@@ -110,7 +110,23 @@ const PaginationNextDisable = ({
     <span className="sr-only">More pages</span>
   </span>
 )
-PaginationNextDisable.displayName = "PaginationNextDisable"
+
+const PaginationPreviousDisable = ({
+  className,
+  ...props
+}: React.ComponentProps<"span">) => (
+  <span
+    aria-hidden
+    className={cn("text-sm inline-flex items-center justify-center whitespace-nowrap px-4 py-2 gap-1 pr-2.5", className)}
+    {...props}
+  >
+    <ChevronLeftIcon className="h-4 w-4" />
+    {" "}
+    След. неделя
+    <span className="sr-only">More pages</span>
+  </span>
+)
+PaginationNextDisable.displayName = "PaginationPreviousDisable"
 
 
 const PaginationEllipsis = ({
@@ -138,4 +154,5 @@ export {
   PaginationNext,
   PaginationEllipsis,
   PaginationNextDisable,
+  PaginationPreviousDisable,
 }
