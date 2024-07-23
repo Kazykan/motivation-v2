@@ -117,28 +117,6 @@ async def add_child_parent_relationship(
     return None
 
 
-# async def add_child_parents_relationship(
-#     session: AsyncSession,
-#     child_id: int,
-#     parents_ids: list[int],
-# ) -> Child | None:
-#     child = await session.get(Child, child_id)
-#     if child is not None:
-#         for parent_id in parents_ids:
-#             parent = await session.scalar(
-#                 select(Parent)
-#                 .where(Parent.id == parent_id)
-#                 .options(
-#                     selectinload(Parent.children),
-#                 ),
-#             )
-#             if parent is not None:
-#                 parent.children.append(child)
-#                 await session.commit()
-#         return child
-#     else:
-#         return None
-
 
 async def update_children(
     session: AsyncSession,

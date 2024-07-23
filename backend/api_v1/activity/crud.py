@@ -1,6 +1,6 @@
 import datetime, math
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.models import Activity, Week, Activity_day
+from core.models import Activity, Week, Activity_day, activity_mtm_week
 from sqlalchemy.engine import Result
 from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload
@@ -69,7 +69,6 @@ async def get_sum_done_activities(
         else:
             total_sum += math.ceil(activity.cost / activ_days * activ_days_done)
     return total_sum
-
 
 
 async def get_activity(
@@ -155,3 +154,32 @@ async def delete_activity(
 ) -> None:
     await session.delete(transfer)
     await session.commit()
+
+
+async def get_activity_with_day_of_week(
+    session: AsyncSession, activity_id: int, week_id: int
+) -> Activity | None:
+    stmt = select(Activity).where(and_(
+        Activity.id == activity_id,
+        Week.id == week_id,
+        Activity.id == activity_mtm_week.c.activity_id,
+        Week.id == activity_mtm_week.c.week_id,
+    ))
+    result: Result = await session.execute(stmt)
+    activity: Activity | None = result.scalars().one_or_none()
+    return activity
+
+
+async def update_all_activity_days_in_period(
+    session: AsyncSession,
+    child_id: int,
+) -> None:
+    """Находим все активности ребенка"""
+    result = "123123"
+    activities = await get_activity_filters(session=session, child_id=child_id)
+    if activities is None:
+        for activity in activities:
+            result: Activity | None = get_activity_with_day_of_week(session=session, activity_id=activity.id, week_id=1)
+            if result is not None:
+                result += f"Activity with {activity.name}\n"
+    return result

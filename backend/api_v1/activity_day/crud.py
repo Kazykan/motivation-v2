@@ -63,8 +63,12 @@ async def create_activity_day(
                     selectinload(Week.activities),
                 ),
             )
+            week_day_check = await session.scalars(select(Week).where(
+                Week.id == datetime.date.isoweekday(activity_day.day),
+                Week.activities.any(Activity.id == activity_day.activity_id),
+            ))
             # Проверяем наличие дня недели
-            if week_day is not None:
+            if week_day is not None and week_day_check is None:
                 week_day_first = week_day.first()
                 week_day_first.activities.append(activity)
     except:
