@@ -59,7 +59,8 @@ async def get_child_by_phone_number(
     session: AsyncSession,
     phone_number: str,
 ) -> Child | None:
-    return await session.get(Child, phone_number)
+    result: Result = await session.execute(select(Child).filter(Child.phone.like(phone_number)))
+    return result.scalar_one_or_none()
 
 
 async def get_child_with_parents(

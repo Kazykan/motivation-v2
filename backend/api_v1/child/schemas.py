@@ -2,9 +2,9 @@ from typing import List, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict
 import datetime
 
-if TYPE_CHECKING:
-    pass
-from api_v1.parent.schemas import Parent
+# if TYPE_CHECKING:
+#     pass
+# from api_v1.parent.schemas import Parent
 
 class ChildBase(BaseModel):
     bot_user_id: int
@@ -42,5 +42,5 @@ class Child(ChildBase):
     id: int
 
 
-class ChildSchema(Child):
-    parents: list[Parent]
+# class ChildSchema(Child):
+#     parents: list[Parent]

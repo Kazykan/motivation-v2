@@ -10,7 +10,7 @@ async def parent_by_id(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Parent:
     """Делаем это как зависимость"""
-    parent = await crud.get_parent(session=session, parent_id=parent_id)
+    parent = await crud.get_parent_by_id(session=session, parent_id=parent_id)
     if parent is not None:
         return parent
 

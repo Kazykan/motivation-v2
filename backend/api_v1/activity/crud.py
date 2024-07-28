@@ -1,5 +1,10 @@
 import datetime, math
+from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
+from api_v1.activity_day.crud import (
+    editor_activity_day_next_week,
+    get_activity_days_between_date,
+)
 from core.models import Activity, Week, Activity_day, activity_mtm_week
 from sqlalchemy.engine import Result
 from sqlalchemy import select, and_
@@ -97,9 +102,9 @@ async def get_activity_by_id(
 
 async def create_activity(
     session: AsyncSession,
-    transfer_in: ActivityCreate,
+    activity_in: ActivityCreate,
 ) -> Activity:
-    transfer = Activity(**transfer_in.model_dump())
+    transfer = Activity(**activity_in.model_dump())
     session.add(transfer)
     await session.commit()
     return transfer
@@ -137,34 +142,36 @@ async def add_activity_week_relationship(
 
 async def update_activity(
     session: AsyncSession,
-    transfer: Activity,
-    transfer_update: ActivityUpdate | ActivityUpdatePartial,
+    activity: Activity,
+    activity_update: ActivityUpdate | ActivityUpdatePartial,
     partial: bool = False,
 ) -> Activity:
     """Делаем либо частичное обновление либо полное в зависимости от partial"""
-    for name, value in transfer_update.model_dump(exclude_unset=partial).items():
-        setattr(transfer, name, value)
+    for name, value in activity_update.model_dump(exclude_unset=partial).items():
+        setattr(activity, name, value)
     await session.commit()
-    return transfer
+    return activity
 
 
 async def delete_activity(
     session: AsyncSession,
-    transfer: Activity,
+    activity: Activity,
 ) -> None:
-    await session.delete(transfer)
+    await session.delete(activity)
     await session.commit()
 
 
 async def get_activity_with_day_of_week(
     session: AsyncSession, activity_id: int, week_id: int
 ) -> Activity | None:
-    stmt = select(Activity).where(and_(
-        Activity.id == activity_id,
-        Week.id == week_id,
-        Activity.id == activity_mtm_week.c.activity_id,
-        Week.id == activity_mtm_week.c.week_id,
-    ))
+    stmt = select(Activity).where(
+        and_(
+            Activity.id == activity_id,
+            Week.id == week_id,
+            Activity.id == activity_mtm_week.c.activity_id,
+            Week.id == activity_mtm_week.c.week_id,
+        )
+    )
     result: Result = await session.execute(stmt)
     activity: Activity | None = result.scalars().one_or_none()
     return activity
@@ -173,13 +180,31 @@ async def get_activity_with_day_of_week(
 async def update_all_activity_days_in_period(
     session: AsyncSession,
     child_id: int,
-) -> None:
+) -> str:
     """Находим все активности ребенка"""
-    result = "123123"
-    activities = await get_activity_filters(session=session, child_id=child_id)
-    if activities is None:
+    result_text = ""
+    today = datetime.datetime.today()
+    next_monday = today + datetime.timedelta(days=(7 - today.weekday() or 7))
+    next_2_week_sunday = next_monday + datetime.timedelta(days=(13))
+    activities: List[Activity] = await get_activity_filters(
+        session=session, child_id=child_id
+    )
+    if len(activities) > 0:
         for activity in activities:
-            result: Activity | None = get_activity_with_day_of_week(session=session, activity_id=activity.id, week_id=1)
-            if result is not None:
-                result += f"Activity with {activity.name}\n"
-    return result
+            activity_with_weeks = await get_activity_by_id(
+                session=session, activity_id=activity.id
+            )
+            week_days: list[int] = []
+            result_text += f"Activity - {activity.name} {next_monday.date()} - {next_2_week_sunday.date()}\n"
+            for week in activity_with_weeks.weeks:
+                result_text += f"  - w {week.week_day} - {week.id}\n"
+                week_days.append(week.id)
+            temp = await editor_activity_day_next_week(
+                session=session,
+                activity_id=activity.id,
+                day_start=next_monday.date(),
+                day_end=next_2_week_sunday.date(),
+                week_days=week_days,
+            )
+            result_text += f"{temp}"
+    return result_text

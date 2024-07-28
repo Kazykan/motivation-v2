@@ -2,8 +2,7 @@ import sys
 from typing import TYPE_CHECKING, List
 from pydantic import BaseModel, ConfigDict
 
-if TYPE_CHECKING:
-    from api_v1.child.schemas import ChildBase
+from api_v1.child.schemas import Child
 
 
 class ParentBase(BaseModel):
@@ -34,3 +33,6 @@ class Parent(ParentBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+class ParentSchema(Parent):
+    children: List[Child]

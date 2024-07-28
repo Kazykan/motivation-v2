@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .schemas import (
     Parent,
     ParentCreate,
-    ParentUpdate,
+    ParentSchema,
     ParentUpdatePartial,
 )
 from . import crud
@@ -13,28 +13,52 @@ from core.models import db_helper
 router = APIRouter(tags=["Parents"])
 
 
-@router.get("/", response_model=list[Parent])
-async def get_parents(
+@router.get("/", response_model=list[ParentSchema] | ParentSchema)
+async def get_parent(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    parent_id: int | None = None,
+    phone_number: str | None = None,
+    bot_user_id: int | None = None,
 ):
+    if parent_id is not None:
+        parent = await crud.get_parent_by_id(
+            session=session,
+            parent_id=parent_id,
+        )
+        if parent is not None:
+            return parent
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Parent {parent_id} not found!",
+        )
+    if phone_number is not None:
+        child = await crud.get_parent_by_phone_number(
+            session=session,
+            phone_number=phone_number,
+        )
+        if child is not None:
+            return child
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Parent number {phone_number} not found!",
+        )
+
+    if bot_user_id is not None:
+        parent = await crud.get_parent_by_bot_user_id(
+            session=session,
+            bot_user_id=bot_user_id,
+        )
+        if parent is not None:
+            return parent
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Parent {bot_user_id} not found!",
+        )
+
     return await crud.get_parents(session=session)
-
-
-@router.get("/bot_user_id/{bot_user_id}/", response_model=Parent)
-async def get_parent_by_bot_user_id(
-    bot_user_id: int,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-) -> Parent | None:
-    parent = await crud.get_parent_by_bot_user_id(
-        session=session, bot_user_id=bot_user_id
-    )
-    if parent is not None:
-        return parent
-
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Parent {bot_user_id} not found!",
-    )
 
 
 @router.post(
@@ -50,6 +74,31 @@ async def create_parent(
         session=session,
         parent_in=parent_in,
     )
+
+
+@router.post(
+    "/add_child",
+    response_model=ParentSchema,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_parent_child_relationship(
+    parent_id: int,
+    child_id: int,
+    add: bool = True,
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    result = await crud.add_parent_child_relationship(
+        session=session,
+        parent_id=parent_id,
+        child_id=child_id,
+        add=add,
+    )
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Parent {parent_id} or Child {child_id} not found!",
+        )
+    return result
 
 
 @router.patch("/{parent_id}/")

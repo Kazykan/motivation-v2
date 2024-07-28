@@ -46,7 +46,7 @@ async def create_transfer(
 ):
     return await crud.create_activity(
         session=session,
-        transfer_in=transfer_in,
+        activity_in=transfer_in,
     )
 
 
@@ -95,6 +95,7 @@ async def get_sum_activities_is_done(
     )
     return sum
 
+
 @router.get("/{activity_id}/", response_model=ActivitySchema)
 async def get_activity_by_id(
     activity_id: int,
@@ -113,7 +114,6 @@ async def get_activity_by_id(
     )
 
 
-
 @router.patch("/{activity_id}/")
 async def update_transfer_partial(
     transfer_update: ActivityUpdatePartial,
@@ -122,8 +122,8 @@ async def update_transfer_partial(
 ):
     return await crud.update_activity(
         session=session,
-        transfer=transfer,
-        transfer_update=transfer_update,
+        activity=transfer,
+        activity_update=transfer_update,
         partial=True,
     )
 
@@ -133,4 +133,4 @@ async def delete_transfer(
     transfer: Activity = Depends(activity_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> None:
-    await crud.delete_activity(session=session, transfer=transfer)
+    await crud.delete_activity(session=session, activity=transfer)

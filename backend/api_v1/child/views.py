@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from .schemas import Child, ChildCreate, ChildSchema, ChildUpdate, ChildUpdatePartial
+from .schemas import Child, ChildCreate, ChildUpdate, ChildUpdatePartial
 from . import crud
 from .dependencies import child_by_id
 from core.models import db_helper
@@ -34,7 +34,7 @@ async def get_child(
 
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Child {phone_number} not found!",
+            detail=f"Child number {phone_number} not found!",
         )
     if bot_user_id is not None:
         child = await crud.get_child_by_bot_user_id(
@@ -51,17 +51,17 @@ async def get_child(
     return await crud.get_children(session=session)
 
 
-@router.get("/{child_id}", response_model=ChildSchema)
-async def get_child_by_id(
-    child_id: int,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    child = await crud.get_child_with_parents(
-        session=session,
-        child_id=child_id,
-    )
-    if child is not None:
-        return child
+# @router.get("/{child_id}", response_model=ChildSchema)
+# async def get_child_by_id(
+#     child_id: int,
+#     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+# ):
+#     child = await crud.get_child_with_parents(
+#         session=session,
+#         child_id=child_id,
+#     )
+#     if child is not None:
+#         return child
 
 
 @router.post(
@@ -81,7 +81,7 @@ async def create_expense(
 
 @router.post(
     "/add_child_parent",
-    response_model=ChildSchema,
+    response_model=Child,
     status_code=status.HTTP_201_CREATED,
 )
 async def add_child_parent_relationship(
