@@ -38,6 +38,7 @@ function App() {
   }, [tg.user?.id])
 
   const child = useChildQuery(tgUserId, !!tgUserId)
+  const parent = 
 
   return (
     <>

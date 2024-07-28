@@ -33,7 +33,7 @@ export function TabsLayout() {
   const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
   const tgUserId = useTgUser((state) => state.tgUserId)
-  const setCurrentWeek = useWeek(state => state.setCurrentWeek)
+  const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
 
   const child = useChildQuery(tgUserId, !!tgUserId)
   // Получаем id ребенка, если он есть, и сохраняем его
@@ -81,7 +81,6 @@ export function TabsLayout() {
                   onCheckedChange={() => {
                     setIsSwitch()
                     setCurrentWeek(undefined)
-                  
                   }}
                 />
                 <Label>Вкл. редак.</Label>
@@ -120,23 +119,19 @@ export function TabsLayout() {
       <TabsContent value="password">
         <Card>
           <CardHeader>
-            <CardTitle>Password</CardTitle>
+            <CardTitle>Дети</CardTitle>
             <CardDescription>
-              Change your password here. After saving, you'll be logged out.
+              Ваши дети заработали на этой неделе.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
+              <div>Rufat 325 р.</div>
+              <div>Медина 125 р.</div>
             </div>
           </CardContent>
           <CardFooter>
-            <Button>Save password</Button>
+            <Button>Добавить ребенка</Button>
           </CardFooter>
         </Card>
       </TabsContent>

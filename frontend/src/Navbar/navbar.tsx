@@ -54,7 +54,7 @@ export function Navbar() {
               <div className="inline relative">
                 <button
                   type="button"
-                  className="inline-flex items-center relative px-2 border rounded-full hover:shadow-lg"
+                  className="inline-flex items-center relative px-2 border rounded-full hover:shadow-sm"
                 >
                   <div className="pl-1">
                     <svg
