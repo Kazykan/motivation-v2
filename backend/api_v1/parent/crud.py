@@ -115,6 +115,6 @@ async def add_parent_child_relationship(
             else:
                 child_first.parents.remove(parent)
             await session.commit()
-            parent = await get_activity_by_id(session, parent_id)
+            parent = await get_parent_by_id(session, parent_id)
             return parent
     return None

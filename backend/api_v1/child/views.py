@@ -118,9 +118,9 @@ async def update_expense_partial(
     )
 
 
-@router.delete("/{expense_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{child_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_expense(
-    expense: Child = Depends(child_by_id),
+    child: Child = Depends(child_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> None:
-    await crud.delete_expense(session=session, expense=expense)
+    await crud.delete_child(session=session, child=child)

@@ -59,13 +59,15 @@ async def get_child_by_phone_number(
     session: AsyncSession,
     phone_number: str,
 ) -> Child | None:
-    result: Result = await session.execute(select(Child).filter(Child.phone.like(phone_number)))
+    result: Result = await session.execute(
+        select(Child).filter(Child.phone.like(phone_number))
+    )
     return result.scalar_one_or_none()
 
 
 async def get_child_with_parents(
-        session: AsyncSession,
-        child_id: int,
+    session: AsyncSession,
+    child_id: int,
 ) -> Child | None:
     stmt = (
         select(Child)
@@ -118,7 +120,6 @@ async def add_child_parent_relationship(
     return None
 
 
-
 async def update_children(
     session: AsyncSession,
     child: Child,
@@ -132,9 +133,9 @@ async def update_children(
     return child
 
 
-async def delete_expense(
+async def delete_child(
     session: AsyncSession,
-    expense: Child,
+    child: Child,
 ) -> None:
-    await session.delete(expense)
+    await session.delete(child)
     await session.commit()

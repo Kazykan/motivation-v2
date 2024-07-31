@@ -130,7 +130,7 @@ async def update_transfer_partial(
 
 @router.delete("/{activity_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_transfer(
-    transfer: Activity = Depends(activity_by_id),
+    activity: Activity = Depends(activity_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> None:
-    await crud.delete_activity(session=session, activity=transfer)
+    await crud.delete_activity(session=session, activity=activity)
