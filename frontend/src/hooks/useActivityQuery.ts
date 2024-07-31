@@ -1,7 +1,6 @@
 import { ActivityService } from "@/service/activity.service"
 import { ActivityChangeProps, IActivitiesPatch } from "@/store/types"
 import { useChild } from "@/store/user"
-import { useWeek } from "@/store/week"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 const useActivityQuery = (child_id: number | null | undefined) => {
@@ -26,7 +25,6 @@ export function useDeleteActivity({
   activity_id,
   setIsOpen,
 }: ActivityChangeProps) {
-  console.log("useDeleteActivity")
   const childId = useChild((set) => set.ChildId)
   const queryClient = useQueryClient()
 

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { useDeleteActivity } from "@/hooks/useActivityQuery"
 import { ActivityChangeProps } from "@/store/types"
-import { useChild } from "@/store/user"
 
 export function DeleteActivityForm({
   activity_id,
