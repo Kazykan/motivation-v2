@@ -1,12 +1,28 @@
-import { ChildService } from "@/service/child.service"
-import { useQuery } from "@tanstack/react-query"
+import { ParentService } from "@/service/parent.service"
+import { ParentCreateSchema } from "@/store/types"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { z } from "zod"
 
 const useParentQuery = (bot_user_id: number | null, status: boolean) => {
   return useQuery({
-    queryFn: async () => await ChildService.get_by_bot_user_id(bot_user_id),
+    queryFn: async () => await ParentService.get_by_bot_user_id(bot_user_id),
     queryKey: ["child", bot_user_id],
     enabled: status
   })
 }
 
 export { useParentQuery }
+
+export function useAddParent() {
+
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: (data: z.infer<typeof ParentCreateSchema>) =>
+      ParentService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["child"] })
+      window.location.reload()
+    },
+  })
+}

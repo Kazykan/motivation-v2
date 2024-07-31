@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react"
-import { TabsLayout } from "./components/Tab-layout/Tabs-layout"
+import { TabsLayoutParent } from "./components/Tab-layout/Tabs-layout-parent"
 import { Navbar } from "./Navbar/navbar"
 import { useTgUser } from "./store/tg_user"
 import { IWebApp } from "./telegram/t.types"
 import { useChildQuery } from "./hooks/useChildQuery"
 import { CarouselDApiDemo } from "./components/carousel-layout"
-import { DialogAddUser } from "./components/form/dialog-add-user"
+import { DialogAddChild } from "./components/form/dialog-add-child"
+import { DialogAddParent } from "./components/form/dialog-add-parent"
+import { useParentQuery } from "./hooks/useParentQuery"
+import { TabsLayoutChild } from "./components/Tab-layout/Tabs-layout-child"
 
 function App() {
   const setTgUserId = useTgUser((state) => state.setTgUserId)
@@ -38,25 +41,32 @@ function App() {
   }, [tg.user?.id])
 
   const child = useChildQuery(tgUserId, !!tgUserId)
-  const parent = 
+  const parent = useParentQuery(tgUserId, !!tgUserId)
 
   return (
     <>
       <Navbar />
       {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
-          {child.data ? (
-            <div>
-              <TabsLayout />
-            </div>
-          ) : (
+          {child.data && <TabsLayoutChild />}
+          {parent.data && <TabsLayoutParent />}
+          {(!child.data || !parent.data) && (
             <>
               <div className="flex justify-center items-center relative mt-3">
                 <CarouselDApiDemo />
               </div>
               {tgUserId && (
                 <div className="flex justify-center items-center relative mb-3">
-                  {tgUserId && <DialogAddUser />}
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-2xl text-foreground">
+                        Создать аккаунт:
+                      </p>
+                    </div>
+                    <div className="flex justify-center gap-3">
+                      <DialogAddChild /> <DialogAddParent />
+                    </div>
+                  </div>
                 </div>
               )}
             </>
