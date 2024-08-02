@@ -23,7 +23,7 @@ export function DialogAddParent() {
       <DialogContent className="sm:max-w-[425px] rounded-xl">
         <DialogHeader>
           <DialogTitle className="text-foreground">
-            Регистрация ребёнка
+            Регистрация родителя
           </DialogTitle>
           <DialogDescription>
             Создание пользователя для начала работы.

@@ -9,12 +9,15 @@ import { DialogAddChild } from "./components/form/dialog-add-child"
 import { DialogAddParent } from "./components/form/dialog-add-parent"
 import { useParentQuery } from "./hooks/useParentQuery"
 import { TabsLayoutChild } from "./components/Tab-layout/Tabs-layout-child"
+import { IParentWithChildren } from "@/store/types"
 
 function App() {
-  const setTgUserId = useTgUser((state) => state.setTgUserId)
+  const setTgUserId = useTgUser((state) => state.setTgChildId)
   const setTgUserName = useTgUser((state) => state.setFirstName)
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
-  const tgUserId = useTgUser((state) => state.tgUserId)
+  const tgUserId = useTgUser((state) => state.tgChildId)
+  const tgParentId = useTgUser((state) => state.tgParentId)
+  const setParentId = useTgUser((state) => state.setParentId)
 
   useEffect(() => {
     const telegram = (window as any).Telegram.WebApp
@@ -36,21 +39,23 @@ function App() {
   useEffect(() => {
     if (typeof tg.user?.id === "number") {
       setTgUserId(tg.user?.id)
+      setParentId(tg.user?.id)
       setTgUserName(tg.user?.first_name)
     }
   }, [tg.user?.id])
 
   const child = useChildQuery(tgUserId, !!tgUserId)
-  const parent = useParentQuery(tgUserId, !!tgUserId)
+  const parent = useParentQuery(tgParentId, !!tgParentId)
 
   return (
     <>
       <Navbar />
       {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
-          {child.data && <TabsLayoutChild />}
+          {child.isLoading && <div>Loading...</div>}
+          {child.data?.id && <TabsLayoutChild />}
           {parent.data && <TabsLayoutParent />}
-          {(!child.data || !parent.data) && (
+          {!child.data && !parent.data && (
             <>
               <div className="flex justify-center items-center relative mt-3">
                 <CarouselDApiDemo />

@@ -27,10 +27,11 @@ export function ChildTabContent() {
   const endOfWeek = useWeek((state) => state.end_of_week)
   const isSwitch = useSwitchEdit((state) => state.isEdit)
   const setIsSwitch = useSwitchEdit((state) => state.setIsEdit)
-  const tgUserId = useTgUser((state) => state.tgUserId)
+  const tgUserId = useTgUser((state) => state.tgChildId)
   const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
 
   const child = useChildQuery(tgUserId, !!tgUserId)
+  console.log(`tgUserId ${tgUserId}`)
   // Получаем id ребенка, если он есть, и сохраняем его
   if (child?.data !== null && child?.data !== undefined && child) {
     setChildId(child.data.id)

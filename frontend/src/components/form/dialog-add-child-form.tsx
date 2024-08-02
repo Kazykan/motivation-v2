@@ -26,7 +26,7 @@ import { ChildService } from "@/service/child.service"
 import { ChildCreateSchema } from "@/store/types"
 
 export function ChildForm() {
-  const tgUserId = useTgUser((state) => state.tgUserId)
+  const tgUserId = useTgUser((state) => state.tgChildId)
   const tgUserName = useTgUser((state) => state.first_name)
 
   const form = useForm<z.infer<typeof ChildCreateSchema>>({
