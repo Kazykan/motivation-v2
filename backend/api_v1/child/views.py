@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from .schemas import Child, ChildCreate, ChildUpdate, ChildUpdatePartial
+from .schemas import Child, ChildCreate, ChildUpdatePartial, ChildSchema
 from . import crud
 from .dependencies import child_by_id
 from core.models import db_helper
@@ -8,7 +8,7 @@ from core.models import db_helper
 router = APIRouter(tags=["Children"])
 
 
-@router.get("/", response_model=list[Child] | Child)
+@router.get("/", response_model=list[ChildSchema] | ChildSchema)
 async def get_child(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
     child_id: int | None = None,
@@ -16,7 +16,7 @@ async def get_child(
     bot_user_id: int | None = None,
 ):
     if child_id is not None:
-        child = await crud.get_child(session=session, child_id=child_id)
+        child = await crud.get_child_by_id(session=session, child_id=child_id)
         if child is not None:
             return child
 

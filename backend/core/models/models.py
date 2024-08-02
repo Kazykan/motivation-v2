@@ -49,7 +49,7 @@ class Child(Base):
     sex: Mapped[int] = mapped_column(SmallInteger)
     max_payout: Mapped[int] = mapped_column(Integer, nullable=True)
     # TODO: Сделать уникальным поле
-    phone: Mapped[str] = mapped_column(String(12))
+    phone: Mapped[str] = mapped_column(String(12), unique=True)
     parents: Mapped[List["Parent"]] = relationship(
         secondary=child_mtm_parent, back_populates="children"
     )
@@ -68,7 +68,7 @@ class Parent(Base):
     sex: Mapped[int] = mapped_column(SmallInteger)
     # TODO расписать функционал доступа
     access: Mapped[int] = mapped_column(Integer, default=0)
-    phone: Mapped[str] = mapped_column(String(12))
+    phone: Mapped[str] = mapped_column(String(12), unique=True)
     children: Mapped[List["Child"]] = relationship(
         secondary=child_mtm_parent, back_populates="parents"
     )

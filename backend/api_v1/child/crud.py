@@ -37,21 +37,31 @@ async def get_children_by_parent_id(
     return list(children)
 
 
-async def get_child(
+async def get_child_by_id(
     session: AsyncSession,
     child_id: int,
 ) -> Child | None:
-    return await session.get(Child, child_id)
+    stmt = (
+        select(Child)
+        .where(Child.id == child_id)
+        .options(selectinload(Child.parents),)
+    )
+    result: Result = await session.execute(stmt)
+    child = result.scalars().one_or_none()
+    return child
 
 
 async def get_child_by_bot_user_id(
     session: AsyncSession,
     bot_user_id: int,
 ) -> Child | None:
-    stmt = select(Child)
-    stmt = stmt.where(Child.bot_user_id == bot_user_id)
+    stmt = (
+        select(Child)
+        .where(Child.bot_user_id == bot_user_id)
+        .options(selectinload(Child.parents))
+    )
     result: Result = await session.execute(stmt)
-    child = result.scalars().first()
+    child = result.scalars().one_or_none()
     return child
 
 

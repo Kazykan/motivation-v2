@@ -42,5 +42,14 @@ class Child(ChildBase):
     id: int
 
 
-# class ChildSchema(Child):
-#     parents: list[Parent]
+class Parent(BaseModel):
+    id: int
+    bot_user_id: int
+    name: str
+    sex: int
+    access: int = 0
+    phone: str | None
+
+
+class ChildSchema(Child):
+    parents: list[Parent]
