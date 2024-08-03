@@ -26,14 +26,14 @@ import { ChildService } from "@/service/child.service"
 import { ChildCreateSchema } from "@/store/types"
 
 export function ChildForm() {
-  const tgUserId = useTgUser((state) => state.tgChildId)
+  const tgChildId = useTgUser((state) => state.ChildBotUserId)
   const tgUserName = useTgUser((state) => state.first_name)
 
   const form = useForm<z.infer<typeof ChildCreateSchema>>({
     resolver: zodResolver(ChildCreateSchema),
     defaultValues: {
       name: tgUserName === null ? "" : tgUserName,
-      bot_user_id: tgUserId === null ? 123 : tgUserId,
+      bot_user_id: tgChildId === null ? 123 : tgChildId,
       birthday: null,
       max_payout: null,
     },
