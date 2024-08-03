@@ -25,7 +25,7 @@ import { ParentCreateSchema } from "@/store/types"
 import { useAddParent } from "@/hooks/useParentQuery"
 
 export function ParentForm() {
-  const tgUserId = useTgUser((state) => state.tgChildId)
+  const tgUserId = useTgUser((state) => state.ChildBotUserId)
   const tgUserName = useTgUser((state) => state.first_name)
 
   const form = useForm<z.infer<typeof ParentCreateSchema>>({

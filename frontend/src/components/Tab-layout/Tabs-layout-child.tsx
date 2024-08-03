@@ -24,18 +24,13 @@ import { DialogAddActivity } from "../form/dialog-add-activity"
 import { PaginationWeeks } from "./Paginator-week"
 import { ChildTabContent } from "./Child-TabContent"
 
-export function TabsLayoutChild() {
+interface childProps {
+  child_id: number | null
+}
+
+export function TabsLayoutChild(child_id: childProps) {
   const setChildId = useChild((state) => state.setChildId)
-  const currentWeek = useWeek((state) => state.current_week)
-  const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
-  const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
 
-  const weekDataStart = useMemo(
-    () => setStartOfWeek(currentWeek),
-    [currentWeek]
-  )
-
-  const weekDataEnd = useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
 
   return (
     <Tabs defaultValue="child" className="w-full px-5">

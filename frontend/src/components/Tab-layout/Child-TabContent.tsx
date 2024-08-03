@@ -27,11 +27,11 @@ export function ChildTabContent() {
   const endOfWeek = useWeek((state) => state.end_of_week)
   const isSwitch = useSwitchEdit((state) => state.isEdit)
   const setIsSwitch = useSwitchEdit((state) => state.setIsEdit)
-  const tgUserId = useTgUser((state) => state.tgChildId)
+  const ChildBotUserId = useTgUser((state) => state.ChildBotUserId)
   const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
 
-  const child = useChildQuery(tgUserId, !!tgUserId)
-  console.log(`tgUserId ${tgUserId}`)
+  const child = useChildQuery(ChildBotUserId, !!ChildBotUserId)
+  console.log(`ChildBotUserId ${ChildBotUserId}`)
   // Получаем id ребенка, если он есть, и сохраняем его
   if (child?.data !== null && child?.data !== undefined && child) {
     setChildId(child.data.id)
@@ -39,6 +39,7 @@ export function ChildTabContent() {
 
   const activities = useActivityQuery(child?.data?.id)
 
+  
   const sumActivitiesDays = useActivitySumDone(
     child?.data?.id,
     startOfDate,

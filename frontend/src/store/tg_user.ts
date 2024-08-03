@@ -1,23 +1,27 @@
 import { create } from "zustand"
 
 interface TgUserIdState {
-  tgChildId: number | null
+  tgUserId: number | null
+  ChildBotUserId: number | null
   tgParentId: number | null
   first_name: string | null
   photo_url: string | null
-  setTgChildId: (tgUserId: number) => void
-  setParentId: (tgUserId: number) => void
+  setTgUserId: (tgUserId: number) => void
+  setChildId: (tgChildId: number) => void
+  setParentId: (tgParentId: number) => void
   setFirstName: (first_name: string) => void
   setPhotoUrl: (photo_url: string) => void
 }
 
 export const useTgUser = create<TgUserIdState>((set) => ({
-  tgChildId: null,
+  tgUserId: null,
+  ChildBotUserId: null,
   tgParentId: null,
   first_name: null,
   photo_url: null,
-  setTgChildId: (tgUserId: number) => set({ tgChildId: tgUserId }),
-  setParentId: (tgParentId: number) => set({ tgParentId: tgParentId}),
+  setTgUserId: (tgUserId: number) => set({ tgUserId: tgUserId }),
+  setChildId: (tgChildId: number) => set({ ChildBotUserId: tgChildId }),
+  setParentId: (tgParentId: number) => set({ tgParentId: tgParentId }),
   setFirstName: (first_name: string) => set({ first_name }),
   setPhotoUrl: (photo_url: string) => set({ photo_url }),
 }))

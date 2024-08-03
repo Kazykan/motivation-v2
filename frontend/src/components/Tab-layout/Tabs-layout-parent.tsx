@@ -14,31 +14,31 @@ import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
 import { useEffect, useMemo } from "react"
 import { ChildTabContent } from "./Child-TabContent"
-import { IParentWithChildren } from "@/store/types"
+import { IParent, IParentWithChildren } from "@/store/types"
 import { useParentQuery } from "@/hooks/useParentQuery"
 import { useTgUser } from "@/store/tg_user"
 
-export function TabsLayoutParent() {
-  const setChildId = useChild((state) => state.setChildId)
-  const currentWeek = useWeek((state) => state.current_week)
-  const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
-  const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
-  const tgChildId = useTgUser((state) => state.tgChildId)
+interface parentProps {
+  parent_id: number | null
+}
+
+export function TabsLayoutParent(parent_id: parentProps) {
+  const tgChildId = useTgUser((state) => state.ChildBotUserId)
+  const setChildId = useTgUser((state) => state.setChildId)
   const tgParentId = useTgUser((state) => state.tgParentId)
 
   const parent = useParentQuery(tgParentId, !!tgParentId)
 
   useEffect(() => {
-    if (parent.data && parent.data.children.length > 0)
-    setChildId(parent.data.children[0].id)
+    if (
+      parent.data?.children !== undefined &&
+      parent.data.children.length > 0
+    ) {
+      setChildId(parent.data.children[0].bot_user_id)
+    }
   }, [parent.data])
 
-  const weekDataStart = useMemo(
-    () => setStartOfWeek(currentWeek),
-    [currentWeek]
-  )
-
-  const weekDataEnd = useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
+  console.log(`tab-layout Parent -> ChildId: ${tgChildId}`)
 
   return (
     <>
