@@ -82,6 +82,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   if (week_days_by_activity.data === undefined) {
     return <div>Нет заданий</div>
   }
+  console.log(`week_days - ${activity_id}`)
 
   const onSubmitUpdate = (data: Omit<IActivitiesDay, "day">) => {
     console.log(`onSubmit activity_day_id: ${data.id}`)
@@ -116,6 +117,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
         {week_days_by_activity.data &&
           current_week_days !== undefined &&
           current_week_days.map((day: Date, index: number) => (
+            
             <button
               key={index}
               className={cn(
@@ -147,7 +149,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
                     })
               }
             >
-              <div className="text-center">{week_days.at(index)}</div>
+              <div className="text-center">{isDayActivity(day)?.is_done}{week_days.at(index)}</div>
               <div className="text-center">{day.getDate()}</div>
             </button>
           ))}
