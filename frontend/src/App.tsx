@@ -9,15 +9,25 @@ import { DialogAddChild } from "./components/form/dialog-add-child"
 import { DialogAddParent } from "./components/form/dialog-add-parent"
 import { useParentQuery } from "./hooks/useParentQuery"
 import { TabsLayoutChild } from "./components/Tab-layout/Tabs-layout-child"
-import { IParentWithChildren } from "@/store/types"
+import { useWeek } from "./store/week"
 
 function App() {
-  const setTgUserId = useTgUser((state) => state.setTgChildId)
+  const setTgUserId = useTgUser((state) => state.setTgUserId)
   const setTgUserName = useTgUser((state) => state.setFirstName)
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
-  const tgUserId = useTgUser((state) => state.tgChildId)
-  const tgParentId = useTgUser((state) => state.tgParentId)
+  const tgUserId = useTgUser((state) => state.tgUserId)
   const setParentId = useTgUser((state) => state.setParentId)
+  const setChildId = useTgUser((state) => state.setChildId)
+  const currentWeek = useWeek((state) => state.current_week)
+  const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
+  const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
+
+  const weekDataStart = useMemo(
+    () => setStartOfWeek(currentWeek),
+    [currentWeek]
+  )
+
+  const weekDataEnd = useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
 
   useEffect(() => {
     const telegram = (window as any).Telegram.WebApp
@@ -39,22 +49,33 @@ function App() {
   useEffect(() => {
     if (typeof tg.user?.id === "number") {
       setTgUserId(tg.user?.id)
-      setParentId(tg.user?.id)
       setTgUserName(tg.user?.first_name)
     }
   }, [tg.user?.id])
 
   const child = useChildQuery(tgUserId, !!tgUserId)
-  const parent = useParentQuery(tgParentId, !!tgParentId)
+  const parent = useParentQuery(tgUserId, !!tgUserId)
+
+   useEffect(() => {
+    if (parent.data?.bot_user_id !== undefined) {
+      setParentId(parent.data?.bot_user_id)
+    }
+  }, [parent.data])
+
+  useEffect(() => {
+    if (child.data?.bot_user_id !== undefined) {
+      setChildId(child.data?.bot_user_id)
+    }
+  }, [child.data])
+
 
   return (
     <>
       <Navbar />
       {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
-          {child.isLoading && <div>Loading...</div>}
-          {child.data?.id && <TabsLayoutChild />}
-          {parent.data && <TabsLayoutParent />}
+          {child.data && <TabsLayoutChild child_id={tgUserId} />}
+          {parent.data && <TabsLayoutParent parent_id={tgUserId} />}
           {!child.data && !parent.data && (
             <>
               <div className="flex justify-center items-center relative mt-3">
