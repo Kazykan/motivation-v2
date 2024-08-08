@@ -10,26 +10,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Weekdays } from "../Activity/calenar"
-import { useChildQuery } from "@/hooks/useChildQuery"
-import { useTgUser } from "@/store/tg_user"
-import { useChild } from "@/store/user"
-import { useWeek } from "@/store/week"
-import { useMemo } from "react"
-import { useActivityQuery } from "@/hooks/useActivityQuery"
-import { useActivitySumDone } from "@/hooks/useActivitySumDone"
-import { Switch } from "../ui/switch"
-import { useSwitchEdit } from "@/store/switch_edit"
-import { DialogAddActivity } from "../form/dialog-add-activity"
-import { PaginationWeeks } from "./Paginator-week"
 import { ChildTabContent } from "./Child-TabContent"
 
-interface childProps {
-  child_id: number | null
-}
 
-export function TabsLayoutChild(child_id: childProps) {
-  const setChildId = useChild((state) => state.setChildId)
+export function TabsLayoutChild() {
 
 
   return (
