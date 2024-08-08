@@ -74,7 +74,7 @@ function App() {
       <Navbar />
       {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
-          {child.data && <TabsLayoutChild child_id={tgUserId} />}
+          {child.data && <TabsLayoutChild />}
           {parent.data && <TabsLayoutParent parent_id={tgUserId} />}
           {!child.data && !parent.data && (
             <>
