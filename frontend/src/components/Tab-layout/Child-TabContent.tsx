@@ -13,7 +13,7 @@ import { useChildQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
 import { Switch } from "../ui/switch"
@@ -33,9 +33,12 @@ export function ChildTabContent() {
   const child = useChildQuery(ChildBotUserId, !!ChildBotUserId)
   console.log(`ChildBotUserId ${ChildBotUserId}`)
   // Получаем id ребенка, если он есть, и сохраняем его
-  if (child?.data !== null && child?.data !== undefined && child) {
-    setChildId(child.data.id)
-  }
+  useEffect(() => {
+    if (child?.data !== null && child?.data !== undefined && child) {
+      setChildId(child.data.id)
+    }
+  }, [child.data])
+
 
   const activities = useActivityQuery(child?.data?.id)
 
@@ -82,6 +85,7 @@ export function ChildTabContent() {
             {activities.data?.length > 0 &&
               activities.data?.map((activities) => (
                 <div key={activities.id} className="space-y-1">
+                  {activities.id}{startOfDate.toISOString()}{endOfWeek.toISOString()}
                   <Weekdays
                     activity_id={activities.id}
                     cost={activities.cost}

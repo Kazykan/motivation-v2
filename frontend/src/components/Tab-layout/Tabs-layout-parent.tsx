@@ -24,7 +24,7 @@ interface parentProps {
 
 export function TabsLayoutParent(parent_id: parentProps) {
   const tgChildId = useTgUser((state) => state.ChildBotUserId)
-  const setChildId = useTgUser((state) => state.setChildId)
+  const setChildId = useChild((state) => state.setChildId)
   const tgParentId = useTgUser((state) => state.tgParentId)
 
   const parent = useParentQuery(tgParentId, !!tgParentId)
@@ -34,7 +34,7 @@ export function TabsLayoutParent(parent_id: parentProps) {
       parent.data?.children !== undefined &&
       parent.data.children.length > 0
     ) {
-      setChildId(parent.data.children[0].bot_user_id)
+      setChildId(parent.data.children[0].id)
     }
   }, [parent.data])
 
