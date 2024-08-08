@@ -8,9 +8,8 @@ import {
   useUpdateActivityDayCheck,
 } from "@/hooks/useActivityDayQuery"
 import { useMemo } from "react"
-import { isSameDay } from "date-fns"
+import { eachDayOfInterval, isSameDay } from "date-fns"
 import { IActivitiesDay } from "@/store/types"
-import { Button } from "../ui/button"
 import { useSwitchEdit } from "@/store/switch_edit"
 import { EditActivityButton } from "./EditActivity"
 
@@ -28,16 +27,21 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   const isSwitch = useSwitchEdit((state) => state.isEdit)
 
   const get_current_week_days = useMemo((): Date[] | undefined => {
-    if (startOfDate !== undefined && startOfDate !== null) {
-      let month_days: Date[] = []
-      for (let i = 0; i < 7; i++) {
-        month_days.push(new Date(new Date().setDate(startOfDate.getDate() + i)))
-      }
+    if (startOfDate !== undefined && startOfDate !== null && endOfWeek !== undefined && endOfWeek !== null) {
+      const month_days = eachDayOfInterval({
+        start: startOfDate,
+        end: endOfWeek
+      })
+      // let month_days: Date[] = []
+      // for (let i = 0; i < 7; i++) {
+      //   month_days.push(new Date(new Date().setDate(startOfDate.getDate() + i)))
+      // }
+      console.log(month_days)
       return month_days
     } else {
       return undefined
     }
-  }, [startOfDate, startOfDate])
+  }, [startOfDate, endOfWeek])
 
   const current_week_days: Date[] | undefined = get_current_week_days
 
@@ -46,10 +50,9 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
     startOfDate,
     endOfWeek
   )
-
-  const isDayActivity = (day: Data) =>
-    week_days_by_activity.data?.find((_, index) =>
-      isSameDay(day, week_days_by_activity.data![index].day)
+  const isDayActivity = (day: Date) =>
+    week_days_by_activity.data?.find((_, index) =>{
+      isSameDay(day, week_days_by_activity.data![index].day)}
     )
 
   const sum_cost = () => {
@@ -82,11 +85,8 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   if (week_days_by_activity.data === undefined) {
     return <div>Нет заданий</div>
   }
-  console.log(`week_days - ${activity_id}`)
 
   const onSubmitUpdate = (data: Omit<IActivitiesDay, "day">) => {
-    console.log(`onSubmit activity_day_id: ${data.id}`)
-    console.log(`is_done: ${!data.is_done} id: ${data.id}`)
     updateMutation.mutate({
       id: data.id,
       is_done: !data.is_done,
@@ -149,8 +149,8 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
                     })
               }
             >
-              <div className="text-center">{isDayActivity(day)?.is_done}{week_days.at(index)}</div>
-              <div className="text-center">{day.getDate()}</div>
+              <div className="text-center">{week_days.at(index)}</div>
+              <div className="text-center">{day.getDate()}.{day.getMonth()}</div>
             </button>
           ))}
       </div>
