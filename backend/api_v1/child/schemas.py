@@ -7,7 +7,7 @@ import datetime
 # from api_v1.parent.schemas import Parent
 
 class ChildBase(BaseModel):
-    bot_user_id: int
+    bot_user_id: int | None
     name: str
     birthday: datetime.date | None
     sex: int
