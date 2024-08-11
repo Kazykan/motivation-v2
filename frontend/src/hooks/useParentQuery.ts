@@ -1,5 +1,5 @@
 import { ParentService } from "@/service/parent.service"
-import { ParentCreateSchema } from "@/store/types"
+import { ChildParentIdsProps, ParentCreateSchema } from "@/store/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
 
@@ -24,5 +24,19 @@ export function useAddParent() {
       queryClient.invalidateQueries({ queryKey: ["parent"] })
       window.location.reload()
     },
+  })
+}
+
+
+export function useAddParentChildRelationship(parent_bot_user_id: number | null) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: ChildParentIdsProps) => 
+      ParentService.addParenChildRelationship(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["parent", parent_bot_user_id]})
+    }
+
   })
 }

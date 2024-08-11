@@ -11,21 +11,19 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useChild } from "@/store/user"
-import { useWeek } from "@/store/week"
-import { useEffect, useMemo } from "react"
+import { useEffect } from "react"
 import { ChildTabContent } from "./Child-TabContent"
-import { IParent, IParentWithChildren } from "@/store/types"
 import { useParentQuery } from "@/hooks/useParentQuery"
 import { useTgUser } from "@/store/tg_user"
+import { useActivitySumDone } from "@/hooks/useActivitySumDone"
+import { useWeek } from "@/store/week"
+import { DialogAddChildWithoutBotId } from "../form/dialog-add-child-without-bot-id"
 
-interface parentProps {
-  parent_id: number | null
-}
-
-export function TabsLayoutParent(parent_id: parentProps) {
-  const tgChildId = useTgUser((state) => state.ChildBotUserId)
+export function TabsLayoutParent() {
   const setChildId = useChild((state) => state.setChildId)
   const tgParentId = useTgUser((state) => state.tgParentId)
+  const startOfDate = useWeek((state) => state.start_of_date)
+  const endOfWeek = useWeek((state) => state.end_of_week)
 
   const parent = useParentQuery(tgParentId, !!tgParentId)
 
@@ -38,7 +36,10 @@ export function TabsLayoutParent(parent_id: parentProps) {
     }
   }, [parent.data])
 
-  console.log(`tab-layout Parent -> ChildId: ${tgChildId}`)
+  function sumActivitiesDays(child_id: number) {
+    return useActivitySumDone(child_id, startOfDate, endOfWeek)
+  }
+
 
   return (
     <>
@@ -75,7 +76,9 @@ export function TabsLayoutParent(parent_id: parentProps) {
                       key={child.id}
                       className="text-2xl font-semibold text-foreground"
                     >
-                      {child.name} {}
+                      {child.name}{" "}
+                      {sumActivitiesDays(child.id) &&
+                        sumActivitiesDays(child.id).data}
                     </div>
                   ))}
                   <div>Rufat 325 р.</div>
@@ -83,7 +86,7 @@ export function TabsLayoutParent(parent_id: parentProps) {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button>Добавить ребенка</Button>
+                <DialogAddChildWithoutBotId />
               </CardFooter>
             </Card>
           </TabsContent>

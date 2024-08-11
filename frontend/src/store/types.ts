@@ -1,5 +1,5 @@
 import { phoneRegex } from "@/service/phone.regex"
-import { number, z } from "zod"
+import { z } from "zod"
 
 export const ChildSchema = z.object({
   id: z.number().nullable(),
@@ -27,7 +27,7 @@ export const ChildCreateSchema = z.object({
     .max(12, { message: "Номер телефона должен быть не более 12 символов" })
     .regex(phoneRegex),
   sex: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number()),
-  bot_user_id: z.number(),
+  bot_user_id: z.number().nullable(),
   birthday: z.date().nullable(),
   max_payout: z.number().nullable(),
 })
@@ -59,6 +59,11 @@ export const ActivityCreateSchema = z.object({
 export interface ActivityChangeProps {
   activity_id: number
   setIsOpen: (isOpen: boolean) => void
+}
+
+export interface ChildParentIdsProps {
+  child_id: number | null
+  parent_id: number | null
 }
 
 export interface IChild {
