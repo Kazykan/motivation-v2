@@ -12,6 +12,7 @@ import { eachDayOfInterval, isSameDay } from "date-fns"
 import { IActivitiesDay } from "@/store/types"
 import { useSwitchEdit } from "@/store/switch_edit"
 import { EditActivityButton } from "./EditActivity"
+import { SumCost } from "./sumCost"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
@@ -26,65 +27,37 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
   const endOfWeek = useWeek((state) => state.end_of_week)
   const isSwitch = useSwitchEdit((state) => state.isEdit)
 
-  const get_current_week_days = useMemo((): Date[] | undefined => {
-    if (startOfDate !== undefined && startOfDate !== null && endOfWeek !== undefined && endOfWeek !== null) {
+  const current_week_days = useMemo((): Date[] | undefined => {
+    if (
+      startOfDate !== undefined &&
+      startOfDate !== null &&
+      endOfWeek !== undefined &&
+      endOfWeek !== null
+    ) {
       const month_days = eachDayOfInterval({
         start: startOfDate,
-        end: endOfWeek
+        end: endOfWeek,
       })
-      // let month_days: Date[] = []
-      // for (let i = 0; i < 7; i++) {
-      //   month_days.push(new Date(new Date().setDate(startOfDate.getDate() + i)))
-      // }
-      console.log(month_days)
       return month_days
     } else {
       return undefined
     }
   }, [startOfDate, endOfWeek])
 
-  const current_week_days: Date[] | undefined = get_current_week_days
-
   const week_days_by_activity = useActivityDayQuery(
     activity_id,
     startOfDate,
     endOfWeek
   )
-  const isDayActivity = (day: Date) =>
-    week_days_by_activity.data?.find((_, index) =>{
-      isSameDay(day, week_days_by_activity.data![index].day)}
-    )
 
-  const sum_cost = () => {
-    console.log(`sum_cost activity_id: ${activity_id}`)
-    let quantity_days: number = 0
-    let days_is_done: number = 0
-    let total_cost: number = cost
-    if (
-      week_days_by_activity.data === undefined ||
-      week_days_by_activity.data?.length === 0
-    ) {
-      return 0
-    } else {
-      quantity_days = week_days_by_activity.data.length
-      days_is_done = week_days_by_activity.data.filter(
-        (day) => day.is_done
-      ).length
-      total_cost =
-        quantity_days === days_is_done
-          ? cost
-          : Math.ceil((cost / quantity_days) * days_is_done)
-    }
-    return total_cost
-  }
+  const isDayActivity = (day: Date) =>
+    week_days_by_activity.data?.find((_, index) =>
+      isSameDay(day, week_days_by_activity.data![index].day)
+    )
 
   const updateMutation = useUpdateActivityDayCheck()
   const createMutation = useCreateActivityDay()
   const deleteMutation = useDeleteActivityDay(activity_id)
-
-  if (week_days_by_activity.data === undefined) {
-    return <div>Нет заданий</div>
-  }
 
   const onSubmitUpdate = (data: Omit<IActivitiesDay, "day">) => {
     updateMutation.mutate({
@@ -102,22 +75,31 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
     deleteMutation.mutate(data)
   }
 
+  if (week_days_by_activity.data == undefined) {
+    return <div>Нет заданий</div>
+  }
   return (
     <>
       <Label htmlFor="name">
         <div className="flex justify-between items-center">
-          <div className="my-3">
-            {activity_name} {sum_cost()}р. /{" "}
+          <div className="my-2">
+            {activity_name}{" "}
+            <SumCost
+              week_days_by_activity={week_days_by_activity.data}
+              cost={cost}
+            />
+            р. /{" "}
             <span className="text-black/70 dark:text-white/35">{cost}р.</span>
           </div>
-          <div>{isSwitch && <EditActivityButton activity_id={activity_id} />}</div>
+          <div>
+            {isSwitch && <EditActivityButton activity_id={activity_id} />}
+          </div>
         </div>
       </Label>
-      <div className="dark:text-white/85 text-black/70 grid grid-cols-7 h-13 items-center justify-center rounded-lg bg-muted w-full py-1 px-1 space-x-2">
+      <div className="dark:text-white/85 text-black/70 grid grid-cols-7 items-center justify-center rounded-lg bg-muted w-full py-1 px-1 space-x-2">
         {week_days_by_activity.data &&
           current_week_days !== undefined &&
           current_week_days.map((day: Date, index: number) => (
-            
             <button
               key={index}
               className={cn(
@@ -150,7 +132,9 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
               }
             >
               <div className="text-center">{week_days.at(index)}</div>
-              <div className="text-center">{day.getDate()}.{day.getMonth()}</div>
+              <div className="text-center">
+                {day.getDate()}
+              </div>
             </button>
           ))}
       </div>
