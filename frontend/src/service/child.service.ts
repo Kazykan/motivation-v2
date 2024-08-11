@@ -13,6 +13,13 @@ export const ChildService = {
     return response.data
   },
 
+  async get_by_phone_number(phone_number: string) {
+    const response = await axiosInstance.get<z.infer<typeof ChildSchema>>(
+      `children/?phone_number=${phone_number}`
+    )
+    return response.data
+  },
+
   async create(data: z.infer<typeof ChildCreateSchema>) {
     const response = await axiosInstance.post<
       z.infer<typeof ChildCreateSchema>

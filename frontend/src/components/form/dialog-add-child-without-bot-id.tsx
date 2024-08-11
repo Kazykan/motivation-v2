@@ -7,16 +7,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ChildForm } from "./dialog-add-child-form"
 import { Baby } from "lucide-react"
+import { ChildFormWithoutBotId } from "./dialog-add-child-without-bot-id-form"
 
-export function DialogAddChild() {
+export function DialogAddChildWithoutBotId() {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2 text-foreground">
           {" "}
-          <Baby size={20} /> Ребёнок
+          <Baby size={20} /> Добавить ребёнка
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] rounded-xl">
@@ -25,10 +25,10 @@ export function DialogAddChild() {
             Регистрация ребёнка
           </DialogTitle>
           <DialogDescription>
-            Создание пользователя для начала работы.
+            Создание ребенка для начала работы.
           </DialogDescription>
         </DialogHeader>
-        <ChildForm />
+        <ChildFormWithoutBotId />
       </DialogContent>
     </Dialog>
   )

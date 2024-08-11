@@ -22,26 +22,34 @@ import {
   SelectValue,
 } from "../ui/select"
 import { ChildCreateSchema } from "@/store/types"
-import { useAddChild } from "@/hooks/useChildQuery"
+import { useAddChild, useChildQueryPhoneNumber } from "@/hooks/useChildQuery"
+import { useAddParentChildRelationship } from "@/hooks/useParentQuery"
 
-export function ChildForm() {
-  const tgChildId = useTgUser((state) => state.ChildBotUserId)
-  const tgUserName = useTgUser((state) => state.first_name)
+export function ChildFormWithoutBotId() {
+  const tgParentId = useTgUser((state) => state.tgParentId)
 
   const form = useForm<z.infer<typeof ChildCreateSchema>>({
     resolver: zodResolver(ChildCreateSchema),
     defaultValues: {
-      name: tgUserName === null ? "" : tgUserName,
-      bot_user_id: tgChildId === null ? undefined : tgChildId,
+      bot_user_id: null,
       birthday: null,
       max_payout: null,
     },
   })
 
   const addChild = useAddChild()
+  
+  const isChildPhone = useChildQueryPhoneNumber(values.phone)
 
   function onSubmit(values: z.infer<typeof ChildCreateSchema>) {
-    addChild.mutate(values)
+    console.log(values.phone)
+    if (isChildPhone.data) {
+      alert("Такой номер телефон уже зарегистрирован в системе.")
+      const addRelationship = useAddParentChildRelationship(tgParentId)
+      addRelationship.mutate({  child_id: isChildPhone.data.id, parent_id: tgParentId})
+    } else {
+      addChild.mutate(values)
+    }
   }
 
   return (
@@ -54,7 +62,7 @@ export function ChildForm() {
             <FormItem>
               <FormLabel className="text-foreground">Имя</FormLabel>
               <FormControl>
-                <Input placeholder={field.name} {...field} />
+                <Input {...field} />
               </FormControl>
 
               <FormMessage />
@@ -70,9 +78,7 @@ export function ChildForm() {
               <FormControl>
                 <Input {...field} type="number" />
               </FormControl>
-              <FormDescription>
-                This is your public display phone.
-              </FormDescription>
+              <FormDescription>Введите номер телефона ребенка.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
