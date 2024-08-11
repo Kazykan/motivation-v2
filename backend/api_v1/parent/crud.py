@@ -35,7 +35,7 @@ async def get_parent_by_phone_number(
 ) -> ParentSchema | None:
     stmt = (
         select(Parent)
-        .where(Parent.phone.like(phone_number))
+        .where(Parent.phone.like(f'%{phone_number[-10:]}%'))
         .options(selectinload(Parent.children))
     )
     result: Result = await session.execute(stmt)
