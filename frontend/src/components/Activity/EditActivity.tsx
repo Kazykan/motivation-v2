@@ -1,7 +1,5 @@
-import { DialogAddActivity } from "../form/dialog-add-activity";
 import { DialogDeleteActivity } from "../form/dialog-delete-activity";
 import { DialogPatchActivity } from "../form/dialog-patch-activity";
-import { Button } from "../ui/button";
 
 interface ActivityProps {
   activity_id: number
