@@ -50,7 +50,6 @@ export function ChildTabContent() {
   )
 
   const sumAllActivitiesCost = useMemo(() => {
-    console.log(`sumAllActivitiesCost`)
     return (
       activities.data?.reduce((sum, activity) => sum + activity.cost, 0) || 0
     )
@@ -85,7 +84,6 @@ export function ChildTabContent() {
             {activities.data?.length > 0 &&
               activities.data?.map((activities) => (
                 <div key={activities.id} className="space-y-1">
-                  {activities.id}{startOfDate.toISOString()}{endOfWeek.toISOString()}
                   <Weekdays
                     activity_id={activities.id}
                     cost={activities.cost}

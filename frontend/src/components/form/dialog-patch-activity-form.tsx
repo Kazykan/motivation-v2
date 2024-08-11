@@ -77,8 +77,6 @@ export function ActivityPatchForm({
       setIsOpen: setIsOpen,
       id: activity_id,
     }
-    console.log("onSubmitPatch")
-    console.log(temp)
     patchActivity.mutate(temp)
   }
 
