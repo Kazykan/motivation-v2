@@ -75,7 +75,7 @@ function App() {
       {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
           {child.data && <TabsLayoutChild />}
-          {parent.data && <TabsLayoutParent parent_id={tgUserId} />}
+          {parent.data && <TabsLayoutParent />}
           {!child.data && !parent.data && (
             <>
               <div className="flex justify-center items-center relative mt-3">
