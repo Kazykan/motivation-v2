@@ -11,10 +11,11 @@ const useChildQuery = (bot_user_id: number | null, status: boolean) => {
   })
 }
 
-const useChildQueryPhoneNumber = (phone_number: string) => {
+const useChildQueryPhoneNumber = (phone_number: string | undefined) => {
   return useQuery({
     queryFn: async () => await ChildService.get_by_phone_number(phone_number),
-    queryKey: ["child_phone", phone_number]
+    queryKey: ["child_phone", phone_number],
+    enabled: !!phone_number
   })
 }
 
