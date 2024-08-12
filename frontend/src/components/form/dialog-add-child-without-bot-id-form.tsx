@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useDebounce } from "react-use"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -21,12 +22,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select"
-import { ChildCreateSchema } from "@/store/types"
+import { ChildCreateSchema, ChildSchema } from "@/store/types"
 import { useAddChild, useChildQueryPhoneNumber } from "@/hooks/useChildQuery"
 import { useAddParentChildRelationship } from "@/hooks/useParentQuery"
+import { useEffect, useState } from "react"
 
 export function ChildFormWithoutBotId() {
   const tgParentId = useTgUser((state) => state.tgParentId)
+  const [ChildPhone, setChildPhone] = useState<string | undefined>(undefined)
+  const [childData, setChildData] = useState<z.infer<
+    typeof ChildSchema
+  > | null>(null)
 
   const form = useForm<z.infer<typeof ChildCreateSchema>>({
     resolver: zodResolver(ChildCreateSchema),
@@ -38,17 +44,43 @@ export function ChildFormWithoutBotId() {
   })
 
   const addChild = useAddChild()
-  
-  const isChildPhone = useChildQueryPhoneNumber(values.phone)
+
+  useEffect(() => {
+    if (ChildPhone !== null && ChildPhone !== undefined && ChildPhone?.length > 6) {
+      const child = useChildQueryPhoneNumber(ChildPhone)
+      if (child.data) {
+        setChildData(child.data)
+      }
+    }
+  }, [ChildPhone])
+
+  // useDebounce(
+  //   () => {
+  //     const child = useChildQueryPhoneNumber(ChildPhone)?.data
+  //     if (child) {
+  //       setChildData(child)
+  //     }
+  //   },
+  //   250,
+  //   [ChildPhone]
+  // )
+
+  const addRelationship = useAddParentChildRelationship(tgParentId)
 
   function onSubmit(values: z.infer<typeof ChildCreateSchema>) {
-    console.log(values.phone)
-    if (isChildPhone.data) {
+    setChildPhone((_) => values.phone)
+    if (childData) {
       alert("Такой номер телефон уже зарегистрирован в системе.")
-      const addRelationship = useAddParentChildRelationship(tgParentId)
-      addRelationship.mutate({  child_id: isChildPhone.data.id, parent_id: tgParentId})
+      console.log(
+        `addRelationship childData.id-${childData.id}  tgParentId${tgParentId}`
+      )
+      // addRelationship.mutate({
+      //   child_id: childData.id,
+      //   parent_id: tgParentId,
+      // })
     } else {
-      addChild.mutate(values)
+      console.log(`addChild ${values}`)
+      // addChild.mutate(values)
     }
   }
 
