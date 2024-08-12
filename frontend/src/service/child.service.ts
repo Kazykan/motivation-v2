@@ -13,7 +13,10 @@ export const ChildService = {
     return response.data
   },
 
-  async get_by_phone_number(phone_number: string) {
+  async get_by_phone_number(phone_number: string | undefined) {
+    if (phone_number === undefined) {
+      return undefined
+    }
     const response = await axiosInstance.get<z.infer<typeof ChildSchema>>(
       `children/?phone_number=${phone_number}`
     )
