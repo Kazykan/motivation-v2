@@ -4,7 +4,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy import select, and_
 from sqlalchemy.orm import selectinload
 
-from .schemas import ChildCreate, ChildUpdate, ChildUpdatePartial
+from .schemas import ChildCreate, ChildUpdate, ChildUpdatePartial, ChildSchema
 
 
 async def get_children(session: AsyncSession) -> list[Child]:
@@ -68,11 +68,15 @@ async def get_child_by_bot_user_id(
 async def get_child_by_phone_number(
     session: AsyncSession,
     phone_number: str,
-) -> Child | None:
-    result: Result = await session.execute(
-        select(Child).filter(Child.phone.like(phone_number))
+) -> ChildSchema | None:
+    stmt = (
+        select(Child)
+        .where(Child.phone.like(f'%{phone_number[-10:]}%'))
+        .options(selectinload(Child.parents))
     )
-    return result.scalar_one_or_none()
+    result: Result = await session.execute(stmt)
+    child = result.scalars().one_or_none()
+    return child
 
 
 async def get_child_with_parents(
