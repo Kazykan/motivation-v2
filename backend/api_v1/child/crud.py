@@ -69,6 +69,10 @@ async def get_child_by_phone_number(
     session: AsyncSession,
     phone_number: str,
 ) -> ChildSchema | None:
+    if len(phone_number) < 10:
+        return None
+    if phone_number[-10] != "9":
+        return None
     stmt = (
         select(Child)
         .where(Child.phone.like(f'%{phone_number[-10:]}%'))

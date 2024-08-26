@@ -33,6 +33,8 @@ async def get_parent_by_phone_number(
     session: AsyncSession,
     phone_number: str,
 ) -> ParentSchema | None:
+    if len(phone_number) < 10:
+        return None
     stmt = (
         select(Parent)
         .where(Parent.phone.like(f'%{phone_number[-10:]}%'))
