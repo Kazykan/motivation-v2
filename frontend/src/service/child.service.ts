@@ -23,6 +23,17 @@ export const ChildService = {
     return response.data
   },
 
+  async get_by_id(id: number | null) {
+    if (id !== null) {
+      const response = await axiosInstance.get<z.infer<typeof ChildSchema>>(
+        `children/?child_id=${id}`
+      )
+      return response.data
+    } else {
+      return undefined
+    }
+  },
+
   async create(data: z.infer<typeof ChildCreateSchema>) {
     const response = await axiosInstance.post<
       z.infer<typeof ChildCreateSchema>

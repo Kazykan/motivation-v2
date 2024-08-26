@@ -9,10 +9,13 @@ import {
 } from "@/components/ui/dialog"
 import { Baby } from "lucide-react"
 import { ChildFormWithoutBotId } from "./dialog-add-child-without-bot-id-form"
+import { useState } from "react"
 
 export function DialogAddChildWithoutBotId() {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2 text-foreground">
           {" "}
@@ -28,7 +31,7 @@ export function DialogAddChildWithoutBotId() {
             Создание ребенка для начала работы.
           </DialogDescription>
         </DialogHeader>
-        <ChildFormWithoutBotId />
+        <ChildFormWithoutBotId setIsOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
   )

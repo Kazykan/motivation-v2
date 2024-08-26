@@ -7,7 +7,7 @@ interface TgUserIdState {
   first_name: string | null
   photo_url: string | null
   setTgUserId: (tgUserId: number) => void
-  setChildId: (tgChildId: number) => void
+  setChildBotUserId: (tgChildId: number) => void
   setParentId: (tgParentId: number) => void
   setFirstName: (first_name: string) => void
   setPhotoUrl: (photo_url: string) => void
@@ -20,7 +20,7 @@ export const useTgUser = create<TgUserIdState>((set) => ({
   first_name: null,
   photo_url: null,
   setTgUserId: (tgUserId: number) => set({ tgUserId: tgUserId }),
-  setChildId: (tgChildId: number) => set({ ChildBotUserId: tgChildId }),
+  setChildBotUserId: (tgChildBotUserId: number) => set({ ChildBotUserId: tgChildBotUserId }),
   setParentId: (tgParentId: number) => set({ tgParentId: tgParentId }),
   setFirstName: (first_name: string) => set({ first_name }),
   setPhotoUrl: (photo_url: string) => set({ photo_url }),

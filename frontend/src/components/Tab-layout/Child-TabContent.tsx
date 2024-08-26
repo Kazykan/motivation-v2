@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Weekdays } from "../Activity/calenar"
-import { useChildQuery } from "@/hooks/useChildQuery"
+import { useChildByBotUserIdQuery, useChildByIdQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
@@ -22,27 +22,27 @@ import { DialogAddActivity } from "../form/dialog-add-activity"
 import { PaginationWeeks } from "./Paginator-week"
 
 export function ChildTabContent() {
-  const setChildId = useChild((state) => state.setChildId)
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
   const isSwitch = useSwitchEdit((state) => state.isEdit)
   const setIsSwitch = useSwitchEdit((state) => state.setIsEdit)
-  const ChildBotUserId = useTgUser((state) => state.ChildBotUserId)
   const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
+  const ChildId = useChild((state) => state.ChildId)
 
-  const child = useChildQuery(ChildBotUserId, !!ChildBotUserId)
-  console.log(`ChildBotUserId ${ChildBotUserId}`)
-  // Получаем id ребенка, если он есть, и сохраняем его
-  useEffect(() => {
-    if (child?.data !== null && child?.data !== undefined && child) {
-      setChildId(child.data.id)
-    }
-  }, [child.data])
+  const child = useChildByIdQuery(ChildId)
 
+  console.log(child.data)
+  // const child = useChildByBotUserIdQuery(ChildBotUserId, !!ChildBotUserId)
+
+  // // Получаем id ребенка, если он есть, и сохраняем его
+  // useEffect(() => {
+  //   if (child?.data !== null && child?.data !== undefined && child) {
+  //     setChildId(child.data.id)
+  //   }
+  // }, [child.data])
 
   const activities = useActivityQuery(child?.data?.id)
 
-  
   const sumActivitiesDays = useActivitySumDone(
     child?.data?.id,
     startOfDate,

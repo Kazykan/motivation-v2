@@ -15,15 +15,15 @@ import { useEffect } from "react"
 import { ChildTabContent } from "./Child-TabContent"
 import { useParentQuery } from "@/hooks/useParentQuery"
 import { useTgUser } from "@/store/tg_user"
-import { useActivitySumDone } from "@/hooks/useActivitySumDone"
-import { useWeek } from "@/store/week"
 import { DialogAddChildWithoutBotId } from "../form/dialog-add-child-without-bot-id"
+import { useParent } from "@/store/parent"
+import { ChildSumActivityDone } from "@/widgets/ChildSumActivityDone"
 
 export function TabsLayoutParent() {
   const setChildId = useChild((state) => state.setChildId)
   const tgParentId = useTgUser((state) => state.tgParentId)
-  const startOfDate = useWeek((state) => state.start_of_date)
-  const endOfWeek = useWeek((state) => state.end_of_week)
+
+  const setPatentId = useParent((state) => state.setParentId)
 
   const parent = useParentQuery(tgParentId, !!tgParentId)
 
@@ -36,10 +36,11 @@ export function TabsLayoutParent() {
     }
   }, [parent.data])
 
-  function sumActivitiesDays(child_id: number) {
-    return useActivitySumDone(child_id, startOfDate, endOfWeek)
-  }
-
+  useEffect(() => {
+    if (parent.data?.id !== undefined) {
+      setPatentId(parent.data.id)
+    }
+  }, [parent.data])
 
   return (
     <>
@@ -53,12 +54,10 @@ export function TabsLayoutParent() {
           <TabsContent value="child">
             <Card>
               {parent.data.children.length > 0 ? (
-                <div>Есть дети</div>
+                <ChildTabContent />
               ) : (
                 <div>нет детей</div>
               )}
-
-              <ChildTabContent />
             </Card>
           </TabsContent>
           <TabsContent value="children">
@@ -76,13 +75,9 @@ export function TabsLayoutParent() {
                       key={child.id}
                       className="text-2xl font-semibold text-foreground"
                     >
-                      {child.name}{" "}
-                      {sumActivitiesDays(child.id) &&
-                        sumActivitiesDays(child.id).data}
+                      <ChildSumActivityDone child_id={child.id} />
                     </div>
                   ))}
-                  <div>Rufat 325 р.</div>
-                  <div>Медина 125 р.</div>
                 </div>
               </CardContent>
               <CardFooter>

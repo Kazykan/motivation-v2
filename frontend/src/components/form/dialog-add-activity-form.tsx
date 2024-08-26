@@ -13,15 +13,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { IActivities } from "@/store/types"
+import { IActivities, OpenDialogProps } from "@/store/types"
 import { useChild } from "@/store/user"
 import { ActivityService } from "@/service/activity.service"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-
-interface ActivityProps {
-  setIsOpen: (isOpen: boolean) => void
-}
 
 const activitySchema = z.object({
   name: z.string().min(1, "Имя задания обязательно"),
@@ -33,7 +29,7 @@ const activitySchema = z.object({
 })
 
 
-export function ActivityForm({ setIsOpen }: ActivityProps) {
+export function ActivityForm({ setIsOpen }: OpenDialogProps) {
   const ChildId = useChild((state) => state.ChildId)
 
   const form = useForm<Omit<IActivities, "id">>({

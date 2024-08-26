@@ -3,13 +3,14 @@ import { TabsLayoutParent } from "./components/Tab-layout/Tabs-layout-parent"
 import { Navbar } from "./Navbar/navbar"
 import { useTgUser } from "./store/tg_user"
 import { IWebApp } from "./telegram/t.types"
-import { useChildQuery } from "./hooks/useChildQuery"
+import { useChildByBotUserIdQuery } from "./hooks/useChildQuery"
 import { CarouselDApiDemo } from "./components/carousel-layout"
 import { DialogAddChild } from "./components/form/dialog-add-child"
 import { DialogAddParent } from "./components/form/dialog-add-parent"
 import { useParentQuery } from "./hooks/useParentQuery"
 import { TabsLayoutChild } from "./components/Tab-layout/Tabs-layout-child"
 import { useWeek } from "./store/week"
+import { useChild } from "./store/user"
 
 function App() {
   const setTgUserId = useTgUser((state) => state.setTgUserId)
@@ -17,10 +18,11 @@ function App() {
   const [webApp, setWebApp] = useState<IWebApp | null>(null)
   const tgUserId = useTgUser((state) => state.tgUserId)
   const setParentId = useTgUser((state) => state.setParentId)
-  const setChildId = useTgUser((state) => state.setChildId)
+  const setChildBotUserId = useTgUser((state) => state.setChildBotUserId)
   const currentWeek = useWeek((state) => state.current_week)
   const setStartOfWeek = useWeek((state) => state.setStartOfWeek)
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
+  const setChildId = useChild((state) => state.setChildId)
 
   const weekDataStart = useMemo(
     () => setStartOfWeek(currentWeek),
@@ -53,10 +55,10 @@ function App() {
     }
   }, [tg.user?.id])
 
-  const child = useChildQuery(tgUserId, !!tgUserId)
+  const child = useChildByBotUserIdQuery(tgUserId, !!tgUserId)
   const parent = useParentQuery(tgUserId, !!tgUserId)
 
-   useEffect(() => {
+  useEffect(() => {
     if (parent.data?.bot_user_id !== undefined) {
       setParentId(parent.data?.bot_user_id)
     }
@@ -64,10 +66,10 @@ function App() {
 
   useEffect(() => {
     if (child.data?.bot_user_id !== undefined) {
-      setChildId(child.data?.bot_user_id)
+      setChildBotUserId(child.data?.bot_user_id)
+      setChildId(child.data?.id)
     }
   }, [child.data])
-
 
   return (
     <>

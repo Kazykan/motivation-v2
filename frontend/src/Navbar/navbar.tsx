@@ -4,7 +4,7 @@ export function Navbar() {
   return (
     <>
       <nav className="bg-background w-full flex relative justify-between items-center mx-auto px-8 h-20">
-        <div className="inline-flex">
+        <div className="flex items-center space-x-2">
           <a className="_o6689fn" href="/">
             <div>
               <svg
@@ -24,6 +24,7 @@ export function Navbar() {
               </svg>
             </div>
           </a>
+          <a href="/"><div className="text-foreground text-2xl">Kazykan</div></a>
         </div>
 
         <div className="flex-initial">

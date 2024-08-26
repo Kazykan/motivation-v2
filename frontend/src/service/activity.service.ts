@@ -31,23 +31,23 @@ export const ActivityService = {
     day_end: Date | null
   ) {
     if (
-      child_id === null ||
-      day_start === null ||
-      day_end === null ||
-      child_id === undefined
+      child_id !== null &&
+      day_start !== null &&
+      day_end !== null &&
+      child_id !== undefined
     ) {
+      const response = await axiosInstance.get<number>(
+        `activities/sum_is_done?day_start=${ConvertDate(
+          day_start
+        )}&day_end=${ConvertDate(day_end)}&child_id=${child_id}`
+      )
+      return response.data
+    } else {
       return undefined
     }
-    const response = await axiosInstance.get<number>(
-      `activities/sum_is_done?day_start=${ConvertDate(
-        day_start
-      )}&day_end=${ConvertDate(day_end)}&child_id=${child_id}`
-    )
-    return response.data
   },
 
   async create(data: Omit<IActivities, "id">) {
-
     const response = await axiosInstance.post<Omit<IActivities, "id">>(
       `activities/`,
       data

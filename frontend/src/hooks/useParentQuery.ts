@@ -1,5 +1,6 @@
 import { ParentService } from "@/service/parent.service"
-import { ChildParentIdsProps, ParentCreateSchema } from "@/store/types"
+import { useTgUser } from "@/store/tg_user"
+import { ChildParentIdsProps, OpenDialogProps, ParentCreateSchema } from "@/store/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
 
@@ -28,15 +29,19 @@ export function useAddParent() {
 }
 
 
-export function useAddParentChildRelationship(parent_bot_user_id: number | null) {
+export function useAddParentChildRelationship({setIsOpen}: OpenDialogProps) {
   const queryClient = useQueryClient()
+  console.log(`use addParentChildRelationship`)
 
   return useMutation({
     mutationFn: (data: ChildParentIdsProps) => 
       ParentService.addParenChildRelationship(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["parent", parent_bot_user_id]})
+      queryClient.invalidateQueries({ queryKey: ["parent"]}),
+      setIsOpen(false)
+    },
+    onError: () => {
+      console.log(`Error`)
     }
-
   })
 }
