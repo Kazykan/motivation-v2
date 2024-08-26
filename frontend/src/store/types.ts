@@ -61,6 +61,10 @@ export interface ActivityChangeProps {
   setIsOpen: (isOpen: boolean) => void
 }
 
+export interface OpenDialogProps {
+  setIsOpen: (isOpen: boolean) => void
+}
+
 export interface ChildParentIdsProps {
   child_id: number | null
   parent_id: number | null
