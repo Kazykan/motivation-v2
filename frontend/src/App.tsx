@@ -7,7 +7,7 @@ import { useChildByBotUserIdQuery } from "./hooks/useChildQuery"
 import { CarouselDApiDemo } from "./components/carousel-layout"
 import { DialogAddChild } from "./components/form/dialog-add-child"
 import { DialogAddParent } from "./components/form/dialog-add-parent"
-import { useParentQuery } from "./hooks/useParentQuery"
+import { useParentBotUserIdQuery } from "./hooks/useParentQuery"
 import { TabsLayoutChild } from "./components/Tab-layout/Tabs-layout-child"
 import { useWeek } from "./store/week"
 import { useChild } from "./store/user"
@@ -56,7 +56,7 @@ function App() {
   }, [tg.user?.id])
 
   const child = useChildByBotUserIdQuery(tgUserId, !!tgUserId)
-  const parent = useParentQuery(tgUserId, !!tgUserId)
+  const parent = useParentBotUserIdQuery(tgUserId, !!tgUserId)
 
   useEffect(() => {
     if (parent.data?.bot_user_id !== undefined) {

@@ -1,4 +1,5 @@
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
+import currencyFormatMoney from "@/service/current.format.money"
 import { useWeek } from "@/store/week"
 
 interface ChildProps {
@@ -10,5 +11,5 @@ export function ChildSumActivityDone({ child_id }: ChildProps) {
   const endOfWeek = useWeek((state) => state.end_of_week)
   const sum = useActivitySumDone(child_id, startOfDate, endOfWeek)
 
-  return <div>Антон {sum.data}р.</div>
+  return <>{currencyFormatMoney(sum.data)}</>
 }

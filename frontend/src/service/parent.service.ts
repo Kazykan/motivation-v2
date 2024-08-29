@@ -17,6 +17,16 @@ export const ParentService = {
     return response.data
   },
 
+  async get_by_id(id: number | null) {
+    if (id === null) {
+      return null
+    }
+    const response = await axiosInstance.get<IParentWithChildren>(
+      `parents/?parent_id=${id}`
+    )
+    return response.data
+  },
+
   async create(data: z.infer<typeof ParentCreateSchema>) {
     const response = await axiosInstance.post<
       z.infer<typeof ParentCreateSchema>
@@ -32,7 +42,6 @@ export const ParentService = {
       data.parent_id !== null &&
       data.parent_id !== undefined
     ) {
-      console.log(`addParenChildRelationship: ${data.child_id}`)
       const response = await axiosInstance.post<IParentWithChildren>(
         `parents/add_child?parent_id=${data.parent_id}&child_id=${data.child_id}&add=true`
       )

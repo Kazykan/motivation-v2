@@ -1,4 +1,4 @@
-import { ChildCreateSchema, ChildSchema } from "@/store/types"
+import { ChildCreateSchema, ChildSchema, IChild } from "@/store/types"
 import { axiosInstance } from "./api"
 import { z } from "zod"
 
@@ -35,9 +35,7 @@ export const ChildService = {
   },
 
   async create(data: z.infer<typeof ChildCreateSchema>) {
-    const response = await axiosInstance.post<
-      z.infer<typeof ChildCreateSchema>
-    >(`children/`, data)
+    const response = await axiosInstance.post<IChild>(`children/`, data)
     return response.data
   },
 }

@@ -34,10 +34,10 @@ import {
   useChildByPhoneNumber,
   useChildQueryPhoneNumber,
 } from "@/hooks/useChildQuery"
-import { phoneRegex } from "@/service/phone.regex"
 import { Loader2 } from "lucide-react"
 import { useAddParentChildRelationship } from "@/hooks/useParentQuery"
 import { useParent } from "@/store/parent"
+import { useEffect } from "react"
 
 export function ChildFormWithoutBotId({ setIsOpen }: OpenDialogProps) {
   const parentId = useParent((state) => state.parentId)
@@ -66,19 +66,31 @@ export function ChildFormWithoutBotId({ setIsOpen }: OpenDialogProps) {
 
   function onSubmitAddRelationship(data: ChildParentIdsProps) {
     addRelationship.mutate(data)
-    console.log(`addRelationship ${data.child_id} ${data.parent_id}`)
-    // form.reset()
   }
+
+  const addChild = useAddChild()
 
   function onSubmit(values: z.infer<typeof ChildCreateSchema>) {
     if (child.data?.id !== null && child.data?.id !== undefined) {
       console.log(`child.data?.id = ${child.data?.id}`)
     } else {
-      console.log(
-        `addChild ${values.birthday}-${values.bot_user_id}-${values.max_payout}-${values.name}-${values.phone}`
-      )
+      addChild.mutate(values)
     }
   }
+
+  useEffect(() => {
+    if (
+      addChild.data !== null &&
+      addChild.data !== undefined &&
+      addChild.data.id !== undefined &&
+      addChild.data.id !== null
+    ) {
+      addRelationship.mutate({
+        child_id: addChild.data.id,
+        parent_id: parentId,
+      })
+    }
+  }, [addChild.isSuccess])
 
   return (
     <Form {...form}>
@@ -172,14 +184,17 @@ export function ChildFormWithoutBotId({ setIsOpen }: OpenDialogProps) {
                         </FormItem>
                       )}
                     />
-                    <Button type="submit">
-                      Submit
-                      {/* <Button disabled={childMutate.isPending} type="submit">
-          {childMutate.isPending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            "Submit"
-          )} */}
+                    {/* <Button type="submit">
+                      Submit */}
+                    <Button
+                      disabled={addChild.isPending && addRelationship.isPending}
+                      type="submit"
+                    >
+                      {addChild.isPending && addRelationship.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        "Submit"
+                      )}
                     </Button>
                   </>
                 )}

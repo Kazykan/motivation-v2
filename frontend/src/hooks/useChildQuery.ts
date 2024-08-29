@@ -1,5 +1,6 @@
 import { ChildService } from "@/service/child.service"
-import { ChildCreateSchema } from "@/store/types"
+import { ParentService } from "@/service/parent.service"
+import { ChildCreateSchema, OpenDialogProps } from "@/store/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
 

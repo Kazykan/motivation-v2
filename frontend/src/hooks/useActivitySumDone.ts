@@ -5,7 +5,7 @@ const useActivitySumDone = (child_id: number | null | undefined, day_start: Date
 
   return useQuery({
     queryFn: async () => await ActivityService.sum_is_done(child_id, day_start, day_end),
-    queryKey: ["sum_done", {day_start: day_start, day_end: day_end}],
+    queryKey: ["sum_done", {day_start: day_start, day_end: day_end, child_id: child_id}],
     enabled: child_id!== null && child_id!== undefined && day_start!== null && day_start!== undefined && day_end!== null && day_end!== undefined,
   })
 }

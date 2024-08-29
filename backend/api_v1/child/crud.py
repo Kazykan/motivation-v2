@@ -126,7 +126,6 @@ async def add_child_parent_relationship(
                 selectinload(Parent.children),
             ),
         )
-        # Проверяем наличие дня недели
         if parent is not None:
             if add:
                 parent.children.append(child)
