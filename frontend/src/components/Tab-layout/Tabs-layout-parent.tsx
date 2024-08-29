@@ -13,19 +13,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useChild } from "@/store/user"
 import { useEffect } from "react"
 import { ChildTabContent } from "./Child-TabContent"
-import { useParentQuery } from "@/hooks/useParentQuery"
+import { useParentBotUserIdQuery } from "@/hooks/useParentQuery"
 import { useTgUser } from "@/store/tg_user"
 import { DialogAddChildWithoutBotId } from "../form/dialog-add-child-without-bot-id"
 import { useParent } from "@/store/parent"
-import { ChildSumActivityDone } from "@/widgets/ChildSumActivityDone"
+import { ChildSelect } from "@/widgets/ChildSelect"
+import { TableChildSumDone } from "@/widgets/TableChildSumDone"
 
 export function TabsLayoutParent() {
   const setChildId = useChild((state) => state.setChildId)
   const tgParentId = useTgUser((state) => state.tgParentId)
-
   const setPatentId = useParent((state) => state.setParentId)
+  const ChildId = useChild((state) => state.ChildId)
 
-  const parent = useParentQuery(tgParentId, !!tgParentId)
+  const parent = useParentBotUserIdQuery(tgParentId, !!tgParentId)
 
   useEffect(() => {
     if (
@@ -54,7 +55,12 @@ export function TabsLayoutParent() {
           <TabsContent value="child">
             <Card>
               {parent.data.children.length > 0 ? (
-                <ChildTabContent />
+                <>
+                  {parent.data.children.length > 1 && ChildId !== null && (
+                    <ChildSelect child_id={ChildId.toString()} />
+                  )}
+                  <ChildTabContent />
+                </>
               ) : (
                 <div>нет детей</div>
               )}
@@ -62,22 +68,9 @@ export function TabsLayoutParent() {
           </TabsContent>
           <TabsContent value="children">
             <Card>
-              <CardHeader>
-                <CardTitle>Дети</CardTitle>
-                <CardDescription>
-                  Ваши дети заработали на этой неделе.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 mt-2">
                 <div className="space-y-1">
-                  {parent.data?.children?.map((child) => (
-                    <div
-                      key={child.id}
-                      className="text-2xl font-semibold text-foreground"
-                    >
-                      <ChildSumActivityDone child_id={child.id} />
-                    </div>
-                  ))}
+                  <TableChildSumDone />
                 </div>
               </CardContent>
               <CardFooter>
