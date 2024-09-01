@@ -1,5 +1,4 @@
 import { ParentService } from "@/service/parent.service"
-import { useTgUser } from "@/store/tg_user"
 import {
   ChildParentIdsProps,
   OpenDialogProps,

@@ -1,8 +1,6 @@
-import { IActivitiesDay, IActivitiesWithWeek } from "@/store/types"
+import { IActivitiesDay } from "@/store/types"
 import { axiosInstance } from "./api"
 import { ConvertDate } from "./date"
-import { create } from "domain"
-import { getISODay } from "date-fns"
 
 export const ActivityDayService = {
   async get_period(

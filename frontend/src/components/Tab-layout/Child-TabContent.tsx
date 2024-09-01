@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button"
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -10,13 +8,12 @@ import {
 import { Label } from "@/components/ui/label"
 import { Weekdays } from "../Activity/calenar"
 import {
-  useChildByBotUserIdQuery,
   useChildByIdQuery,
 } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
 import { useSwitchEdit } from "@/store/switch_edit"

@@ -1,6 +1,5 @@
 import { ActivityDayService } from "@/service/activity_day.service"
 import { IActivitiesDay } from "@/store/types"
-import { useWeek } from "@/store/week"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 // const startOfDate = useWeek((state) => state.start_of_date)

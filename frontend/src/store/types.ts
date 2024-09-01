@@ -120,6 +120,18 @@ export interface IActivitiesWithWeek {
   weeks: IWeek[]
 }
 
+export interface IActivitiesAdd {
+  id?: number
+  name: string
+  title?: string | null
+  percent_complete?: number
+  cost: number
+  max_cost?: number | null
+  child_id: number
+  weeks?: IWeek[]
+}
+
+
 export interface IActivitiesDay {
   is_done: boolean
   day: Date

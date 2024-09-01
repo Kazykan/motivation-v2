@@ -3,13 +3,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useChildByIdQuery } from "@/hooks/useChildQuery"
 import { useParentBotUserIdQuery } from "@/hooks/useParentQuery"
-import { useParent } from "@/store/parent"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useEffect, useState } from "react"

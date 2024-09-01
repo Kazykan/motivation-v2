@@ -13,8 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import {
   ActivityChangeProps,
-  IActivities,
-  IActivitiesWithWeek,
+  IActivitiesAdd,
 } from "@/store/types"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -41,7 +40,7 @@ export function ActivityPatchForm({
 
   const activity = useOneActivityQuery(activity_id)
 
-  const form = useForm<IActivitiesWithWeek>({
+  const form = useForm<IActivitiesAdd>({
     defaultValues: {
       name: "",
       title: "",
@@ -50,10 +49,10 @@ export function ActivityPatchForm({
   })
 
   useEffect(() => {
-    const defaultValues: IActivitiesWithWeek = {
+    const defaultValues: IActivitiesAdd = {
       name: activity.data?.name === undefined ? "" : activity.data?.name,
       title: activity.data?.title,
-      cost: String(activity.data?.cost),
+      cost: activity.data?.cost ?? 0,
       percent_complete: activity.data?.percent_complete,
       max_cost: 0,
       child_id:
@@ -67,7 +66,7 @@ export function ActivityPatchForm({
     setIsOpen: setIsOpen,
   })
 
-  const onSubmitPatch = (values: IActivities) => {
+  const onSubmitPatch = (values: IActivitiesAdd) => {
     const temp = {
       ...values,
       cost: Number(values.cost),

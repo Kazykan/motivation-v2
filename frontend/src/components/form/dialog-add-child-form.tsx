@@ -24,7 +24,6 @@ import {
 } from "../ui/select"
 import {
   ChildCreateSchema,
-  ChildParentIdsProps,
   IChild,
   OpenDialogProps,
 } from "@/store/types"
@@ -34,8 +33,6 @@ import {
   useChildByPhoneNumber,
 } from "@/hooks/useChildQuery"
 import { Loader2 } from "lucide-react"
-import { useParent } from "@/store/parent"
-import { useEffect } from "react"
 import { useTgUser } from "@/store/tg_user"
 
 export function ChildForm({ setIsOpen }: OpenDialogProps) {
@@ -76,20 +73,6 @@ export function ChildForm({ setIsOpen }: OpenDialogProps) {
       addChild.mutate(values)
     }
   }
-
-  useEffect(() => {
-    if (
-      addChild.data !== null &&
-      addChild.data !== undefined &&
-      addChild.data.id !== undefined &&
-      addChild.data.id !== null
-    ) {
-      addChildTelegramBotId.mutate({
-        child_id: addChild.data.id,
-        parent_id: parentId,
-      })
-    }
-  }, [addChild.isSuccess])
 
   return (
     <Form {...form}>
