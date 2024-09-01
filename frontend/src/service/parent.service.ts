@@ -35,7 +35,6 @@ export const ParentService = {
   },
 
   async addParenChildRelationship(data: ChildParentIdsProps) {
-    console.log(`addParenChildRelations`)
     if (
       data.child_id !== null &&
       data.child_id !== undefined &&

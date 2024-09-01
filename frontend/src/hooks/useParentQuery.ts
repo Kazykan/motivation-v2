@@ -49,7 +49,6 @@ export function useAddParentChildRelationship({ setIsOpen }: OpenDialogProps) {
       queryClient.invalidateQueries({ queryKey: ["parent"] }), setIsOpen(false)
     },
     onError: () => {
-      console.log(`Error`)
     },
   })
 }

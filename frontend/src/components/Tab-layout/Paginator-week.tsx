@@ -35,7 +35,6 @@ export function PaginationWeeks() {
     } else {
         nextWeek = addDays(day, -7)
     }
-    console.log(nextWeek)
     setCurrentWeek(nextWeek)
   }
 

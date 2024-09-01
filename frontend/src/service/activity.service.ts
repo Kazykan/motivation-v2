@@ -65,7 +65,6 @@ export const ActivityService = {
       `activities/${data.id}/`,
       { name: data.name, title: data.title, cost: data.cost }
     )
-    console.log(response.data)
     return response.data
   },
 }

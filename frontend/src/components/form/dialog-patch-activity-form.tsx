@@ -38,10 +38,8 @@ export function ActivityPatchForm({
   activity_id,
   setIsOpen,
 }: ActivityChangeProps) {
-  console.log(`ActivityPatchForm ${activity_id}`)
 
   const activity = useOneActivityQuery(activity_id)
-  console.log(activity)
 
   const form = useForm<IActivitiesWithWeek>({
     defaultValues: {
@@ -52,7 +50,6 @@ export function ActivityPatchForm({
   })
 
   useEffect(() => {
-    console.log(`useEffect ${activity.data}`)
     const defaultValues: IActivitiesWithWeek = {
       name: activity.data?.name === undefined ? "" : activity.data?.name,
       title: activity.data?.title,

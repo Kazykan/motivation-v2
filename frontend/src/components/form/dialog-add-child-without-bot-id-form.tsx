@@ -69,7 +69,6 @@ export function ChildFormWithoutBotId({ setIsOpen }: OpenDialogProps) {
 
   function onSubmit(values: z.infer<typeof ChildCreateSchema>) {
     if (child.data?.id !== null && child.data?.id !== undefined) {
-      console.log(`child.data?.id = ${child.data?.id}`)
     } else {
       addChild.mutate(values)
     }

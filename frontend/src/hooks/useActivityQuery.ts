@@ -46,7 +46,6 @@ export function useDeleteActivity({
 }
 
 export function usePatchActivity({activity_id, setIsOpen }: ActivityChangeProps) {
-  console.log("usePatchActivity")
   const childId = useChild((set) => set.ChildId)
   const queryClient = useQueryClient()
 

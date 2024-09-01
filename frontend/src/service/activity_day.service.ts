@@ -30,19 +30,16 @@ export const ActivityDayService = {
   },
 
   async update(data: Omit<IActivitiesDay, "day">) {
-    console.log(`Updating activity day ${data.id} to ${data.is_done}`)
     const response = await axiosInstance.patch<IActivitiesDay>(
       `activity_days/${data.id}/`,
       {
         is_done: data.is_done,
       }
     )
-    console.log(`response.data.is_done - ${response.data.is_done}`)
     return response.data
   },
 
   async post(data: Omit<IActivitiesDay, "is_done" | "id">) {
-    console.log(`post activity day - ${ConvertDate(data.day)}`)
     const response = await axiosInstance.post<IActivitiesDay>(
       `activity_days/`,
       { day: ConvertDate(data.day), activity_id: data.activity_id }

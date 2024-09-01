@@ -24,12 +24,12 @@ function App() {
   const setEndOfWeek = useWeek((state) => state.setEndOfWeek)
   const setChildId = useChild((state) => state.setChildId)
 
-  const weekDataStart = useMemo(
+  useMemo(
     () => setStartOfWeek(currentWeek),
     [currentWeek]
   )
 
-  const weekDataEnd = useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
+  useMemo(() => setEndOfWeek(currentWeek), [currentWeek])
 
   useEffect(() => {
     const telegram = (window as any).Telegram.WebApp
@@ -101,8 +101,6 @@ function App() {
           )}
         </>
       )}
-
-      {tg?.user?.photo_url && <img src={tg.user.photo_url} alt="User Photo" />}
     </>
   )
 }

@@ -25,7 +25,6 @@ const useActivityDayQuery = (
 export { useActivityDayQuery }
 
 export function useUpdateActivityDayCheck() {
-  console.log("useActivityDayCheck")
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -43,7 +42,6 @@ export function useUpdateActivityDayCheck() {
 }
 
 export function useCreateActivityDay() {
-  console.log("useActivityDayCheck")
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -61,7 +59,6 @@ export function useCreateActivityDay() {
 }
 
 export function useDeleteActivityDay(activity_id: number) {
-  console.log("useActivityDayCheck")
   const queryClient = useQueryClient()
 
   return useMutation({
