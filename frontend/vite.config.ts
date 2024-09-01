@@ -11,23 +11,11 @@ export default defineConfig({
     },
   },
   // server: {
+  //   host: "tg-mini-app.local",
   //   port: 443,
-  //   host: "0.0.0.0",
-  //   hmr: {
-  //       host: 'tg-mini-app.local',
-  //       port: 443,
-  //   },
   //   https: {
-  //     key: fs.readFileSync('./.cert/localhost-key.pem'),
-  //     cert: fs.readFileSync('./.cert/localhost.pem'),
+  //     key: fs.readFileSync("./.cert/localhost-key.pem"),
+  //     cert: fs.readFileSync("./.cert/localhost.pem"),
   //   },
   // },
-  server: {
-    host: "tg-mini-app.local",
-    port: 443,
-    https: {
-      key: fs.readFileSync("./.cert/localhost-key.pem"),
-      cert: fs.readFileSync("./.cert/localhost.pem"),
-    },
-  },
 })
