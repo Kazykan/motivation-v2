@@ -23,6 +23,7 @@ import { useSwitchEdit } from "@/store/switch_edit"
 import { DialogAddActivity } from "../form/dialog-add-activity"
 import { PaginationWeeks } from "./Paginator-week"
 import currencyFormatMoney from "@/service/current.format.money"
+import { Switch } from "../ui/switch"
 
 export function ChildTabContent({ children }: { children: React.ReactNode }) {
   const startOfDate = useWeek((state) => state.start_of_date)
@@ -31,6 +32,7 @@ export function ChildTabContent({ children }: { children: React.ReactNode }) {
   const setIsSwitch = useSwitchEdit((state) => state.setIsEdit)
   const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
   const ChildId = useChild((state) => state.ChildId)
+  const tgParentId = useTgUser((state) => state.tgParentId)
 
   const child = useChildByIdQuery(ChildId)
 
@@ -51,7 +53,22 @@ export function ChildTabContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <CardHeader>
-        {children ? children : <CardTitle>{child?.data?.name}</CardTitle>}
+        <div className="flex justify-between">
+          {children ? children : <CardTitle>{child?.data?.name}</CardTitle>}
+          {tgParentId && (
+            <div className="flex items-center space-x-2">
+              <Switch
+                checked={isSwitch}
+                onCheckedChange={() => {
+                  setIsSwitch()
+                  setCurrentWeek(undefined)
+                }}
+              />
+              <Label>Вкл. редак.</Label>
+            </div>
+          )}
+        </div>
+
         <CardDescription>
           Задания на неделю. Итог:{" "}
           <span className="font-bold">

@@ -11,15 +11,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChildTabContent } from "./Child-TabContent"
-import { Switch } from "../ui/switch"
-import { useSwitchEdit } from "@/store/switch_edit"
-import { useWeek } from "@/store/week"
+
 
 export function TabsLayoutChild() {
-  const isSwitch = useSwitchEdit((state) => state.isEdit)
-  const setIsSwitch = useSwitchEdit((state) => state.setIsEdit)
-  const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
-
   return (
     <Tabs defaultValue="child" className="w-full px-5">
       <TabsList className="grid w-full grid-cols-2">
@@ -28,18 +22,7 @@ export function TabsLayoutChild() {
       </TabsList>
       <TabsContent value="child">
         <Card>
-          <ChildTabContent>
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={isSwitch}
-                onCheckedChange={() => {
-                  setIsSwitch()
-                  setCurrentWeek(undefined)
-                }}
-              />
-              <Label>Вкл. редак.</Label>
-            </div>
-          </ChildTabContent>
+          <ChildTabContent>{null}</ChildTabContent>
         </Card>
       </TabsContent>
       <TabsContent value="Свойство">
