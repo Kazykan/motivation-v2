@@ -38,4 +38,11 @@ export const ChildService = {
     const response = await axiosInstance.post<IChild>(`children/`, data)
     return response.data
   },
+
+  async patch_tg_bot_user_id(data: Pick<IChild, "id" | "bot_user_id">) {
+    const response = await axiosInstance.patch<IChild>(`children/${data.id}/`, {
+      bot_user_id: data.bot_user_id,
+    })
+    return response.data
+  },
 }

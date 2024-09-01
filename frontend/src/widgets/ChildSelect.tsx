@@ -34,7 +34,7 @@ export function ChildSelect({ child_id }: { child_id: string }) {
       parent.data !== null &&
       parent.data.children.length > 1 ? (
         <Select value={value} onValueChange={setValue}>
-          <SelectTrigger className="w-[250px] mt-5 mx-4">
+          <SelectTrigger className="w-[250px] mb-1">
             <SelectValue placeholder="Select a fruit" />
           </SelectTrigger>
           <SelectContent>

@@ -9,19 +9,22 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Weekdays } from "../Activity/calenar"
-import { useChildByBotUserIdQuery, useChildByIdQuery } from "@/hooks/useChildQuery"
+import {
+  useChildByBotUserIdQuery,
+  useChildByIdQuery,
+} from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
 import { useEffect, useMemo } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
 import { useActivitySumDone } from "@/hooks/useActivitySumDone"
-import { Switch } from "../ui/switch"
 import { useSwitchEdit } from "@/store/switch_edit"
 import { DialogAddActivity } from "../form/dialog-add-activity"
 import { PaginationWeeks } from "./Paginator-week"
+import currencyFormatMoney from "@/service/current.format.money"
 
-export function ChildTabContent() {
+export function ChildTabContent({ children }: { children: React.ReactNode }) {
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
   const isSwitch = useSwitchEdit((state) => state.isEdit)
@@ -30,16 +33,6 @@ export function ChildTabContent() {
   const ChildId = useChild((state) => state.ChildId)
 
   const child = useChildByIdQuery(ChildId)
-
-  console.log(child.data)
-  // const child = useChildByBotUserIdQuery(ChildBotUserId, !!ChildBotUserId)
-
-  // // Получаем id ребенка, если он есть, и сохраняем его
-  // useEffect(() => {
-  //   if (child?.data !== null && child?.data !== undefined && child) {
-  //     setChildId(child.data.id)
-  //   }
-  // }, [child.data])
 
   const activities = useActivityQuery(child?.data?.id)
 
@@ -58,23 +51,13 @@ export function ChildTabContent() {
   return (
     <>
       <CardHeader>
-        <div className="flex justify-between">
-          <CardTitle>{child?.data?.name}</CardTitle>
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={isSwitch}
-              onCheckedChange={() => {
-                setIsSwitch()
-                setCurrentWeek(undefined)
-              }}
-            />
-            <Label>Вкл. редак.</Label>
-          </div>
-        </div>
+        {children ? children : <CardTitle>{child?.data?.name}</CardTitle>}
         <CardDescription>
           Задания на неделю. Итог:{" "}
-          {sumActivitiesDays && sumActivitiesDays?.data}р./
-          {sumAllActivitiesCost}р.
+          <span className="font-bold">
+            {sumActivitiesDays && currencyFormatMoney(sumActivitiesDays?.data)}/
+          </span>
+          {currencyFormatMoney(sumAllActivitiesCost)}
           {startOfDate && endOfWeek && <PaginationWeeks />}
         </CardDescription>
       </CardHeader>

@@ -1,3 +1,4 @@
+import currencyFormatMoney from "@/service/current.format.money"
 import { IActivitiesDay } from "@/store/types"
 
 interface SumCostProps {
@@ -25,5 +26,5 @@ interface SumCostProps {
           ? cost
           : Math.ceil((cost / quantity_days) * days_is_done)
     }
-    return total_cost
+    return currencyFormatMoney(total_cost)
   }

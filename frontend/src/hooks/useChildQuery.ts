@@ -1,6 +1,6 @@
 import { ChildService } from "@/service/child.service"
 import { ParentService } from "@/service/parent.service"
-import { ChildCreateSchema, OpenDialogProps } from "@/store/types"
+import { ChildCreateSchema, IChild, OpenDialogProps } from "@/store/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
 
@@ -54,6 +54,19 @@ export function useChildByPhoneNumber() {
       ChildService.get_by_phone_number(phone_number),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["child_phone"] })
+    },
+  })
+}
+
+export function useAddChildTelegramBotId({ setIsOpen }: OpenDialogProps) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: Pick<IChild, "id" | "bot_user_id">) =>
+      ChildService.patch_tg_bot_user_id(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["child"] }), setIsOpen(false)
+      window.location.reload()
     },
   })
 }

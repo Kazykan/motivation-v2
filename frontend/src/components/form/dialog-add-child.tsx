@@ -9,10 +9,14 @@ import {
 } from "@/components/ui/dialog"
 import { ChildForm } from "./dialog-add-child-form"
 import { Baby } from "lucide-react"
+import { useState } from "react"
 
 export function DialogAddChild() {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2 text-foreground">
           {" "}
@@ -28,7 +32,7 @@ export function DialogAddChild() {
             Создание пользователя для начала работы.
           </DialogDescription>
         </DialogHeader>
-        <ChildForm />
+        <ChildForm setIsOpen={setIsOpen} />
       </DialogContent>
     </Dialog>
   )

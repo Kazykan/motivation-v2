@@ -13,6 +13,7 @@ import { IActivitiesDay } from "@/store/types"
 import { useSwitchEdit } from "@/store/switch_edit"
 import { EditActivityButton } from "./EditActivity"
 import { SumCost } from "./sumCost"
+import currencyFormatMoney from "@/service/current.format.money"
 
 const week_days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
 
@@ -88,8 +89,8 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
               week_days_by_activity={week_days_by_activity.data}
               cost={cost}
             />
-            р. /{" "}
-            <span className="text-black/70 dark:text-white/35">{cost}р.</span>
+            /{" "}
+            <span className="text-black/60 dark:text-white/35">{currencyFormatMoney(cost)}</span>
           </div>
           <div>
             {isSwitch && <EditActivityButton activity_id={activity_id} />}

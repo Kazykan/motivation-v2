@@ -15,7 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useTgUser } from "@/store/tg_user"
 import {
   Select,
   SelectContent,
@@ -26,13 +25,11 @@ import {
 import {
   ChildCreateSchema,
   ChildParentIdsProps,
-  ChildSchema,
   OpenDialogProps,
 } from "@/store/types"
 import {
   useAddChild,
   useChildByPhoneNumber,
-  useChildQueryPhoneNumber,
 } from "@/hooks/useChildQuery"
 import { Loader2 } from "lucide-react"
 import { useAddParentChildRelationship } from "@/hooks/useParentQuery"

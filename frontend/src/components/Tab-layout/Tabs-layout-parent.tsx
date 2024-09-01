@@ -56,10 +56,15 @@ export function TabsLayoutParent() {
             <Card>
               {parent.data.children.length > 0 ? (
                 <>
-                  {parent.data.children.length > 1 && ChildId !== null && (
-                    <ChildSelect child_id={ChildId.toString()} />
-                  )}
-                  <ChildTabContent />
+                  {parent.data.children.length > 1 && ChildId !== null ? (
+                    <ChildTabContent>
+                      <ChildSelect child_id={ChildId.toString()} />
+                    </ChildTabContent>
+                  ):
+                    <ChildTabContent>
+                      {null}
+                    </ChildTabContent>
+                  }
                 </>
               ) : (
                 <div>нет детей</div>
