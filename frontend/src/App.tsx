@@ -74,6 +74,7 @@ function App() {
   return (
     <>
       <Navbar />
+      {process.env.REACT_APP_API_URL}
       {typeof tg.user?.id === "number" && tg.user.id !== undefined && (
         <>
           {child.data && <TabsLayoutChild />}
