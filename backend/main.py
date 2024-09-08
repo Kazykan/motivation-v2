@@ -9,7 +9,6 @@ from api_v1 import router as router_v1
 from core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 
-import threading
 from datetime import datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
