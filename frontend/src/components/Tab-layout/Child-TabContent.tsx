@@ -6,10 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Weekdays } from "../Activity/calenar"
-import {
-  useChildByIdQuery,
-} from "@/hooks/useChildQuery"
+import { Activity } from "../Activity/calenar"
+import { useChildByIdQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
@@ -67,11 +65,15 @@ export function ChildTabContent({ children }: { children: React.ReactNode }) {
         </div>
 
         <CardDescription>
-          Задания на неделю. Итог:{" "}
-          <span className="font-bold">
-            {sumActivitiesDays && currencyFormatMoney(sumActivitiesDays?.data)}/
-          </span>
-          {currencyFormatMoney(sumAllActivitiesCost)}
+          Задания на неделю.
+          <p>
+            Итог:{" "}
+            <span className="font-bold text-primary">
+              {sumActivitiesDays &&
+                currencyFormatMoney(sumActivitiesDays?.data)}
+            </span>
+            /{" "}{currencyFormatMoney(sumAllActivitiesCost)}
+          </p>
           {startOfDate && endOfWeek && <PaginationWeeks />}
         </CardDescription>
       </CardHeader>
@@ -81,7 +83,7 @@ export function ChildTabContent({ children }: { children: React.ReactNode }) {
             {activities.data?.length > 0 &&
               activities.data?.map((activities) => (
                 <div key={activities.id} className="space-y-1">
-                  <Weekdays
+                  <Activity
                     activity_id={activities.id}
                     cost={activities.cost}
                     activity_name={activities.name}

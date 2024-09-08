@@ -46,7 +46,7 @@ export function TabsLayoutParent() {
   return (
     <>
       {parent.data && (
-        <Tabs defaultValue="child" className="w-full px-5">
+        <Tabs defaultValue="child" className="w-full px-3">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="child">Ребенок</TabsTrigger>
             <TabsTrigger value="children">Дети</TabsTrigger>

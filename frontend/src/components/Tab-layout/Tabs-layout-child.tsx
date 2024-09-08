@@ -11,11 +11,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ChildTabContent } from "./Child-TabContent"
-
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion"
 
 export function TabsLayoutChild() {
   return (
-    <Tabs defaultValue="child" className="w-full px-5">
+    <Tabs defaultValue="child" className="w-full px-3">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="child">Выплаты</TabsTrigger>
         <TabsTrigger value="Свойство">Вопросы</TabsTrigger>
@@ -26,27 +31,20 @@ export function TabsLayoutChild() {
         </Card>
       </TabsContent>
       <TabsContent value="Свойство">
-        <Card>
-          <CardHeader>
-            <CardTitle>Свойство</CardTitle>
-            <CardDescription>
-              Change your password here. After saving, you'll be logged out.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button>Save password</Button>
-          </CardFooter>
-        </Card>
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Как добавлять задания?</AccordionTrigger>
+            <AccordionContent>
+              Задания добавляют ваши родители.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger>Как считается сумма по выполненным заданиям?</AccordionTrigger>
+            <AccordionContent>
+              Если сумма равна например 10р. и 3 дня на его выполнения то 1 задание округляется в большую сторону и оно будет стоить 4р.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </TabsContent>
     </Tabs>
   )

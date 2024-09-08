@@ -23,7 +23,7 @@ interface WeekdaysProps {
   activity_name: string
 }
 
-export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
+export function Activity({ activity_id, cost, activity_name }: WeekdaysProps) {
   const startOfDate = useWeek((state) => state.start_of_date)
   const endOfWeek = useWeek((state) => state.end_of_week)
   const isSwitch = useSwitchEdit((state) => state.isEdit)
@@ -89,8 +89,10 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
               week_days_by_activity={week_days_by_activity.data}
               cost={cost}
             />
-            /{" "}
-            <span className="text-black/60 dark:text-white/35">{currencyFormatMoney(cost)}</span>
+            
+            <span className="text-black/60 dark:text-white/35">
+            {" "}/{currencyFormatMoney(cost)}
+            </span>
           </div>
           <div>
             {isSwitch && <EditActivityButton activity_id={activity_id} />}
@@ -133,9 +135,7 @@ export function Weekdays({ activity_id, cost, activity_name }: WeekdaysProps) {
               }
             >
               <div className="text-center">{week_days.at(index)}</div>
-              <div className="text-center">
-                {day.getDate()}
-              </div>
+              <div className="text-center">{day.getDate()}</div>
             </button>
           ))}
       </div>
