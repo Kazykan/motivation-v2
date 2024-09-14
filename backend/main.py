@@ -1,9 +1,7 @@
-import datetime
 from fastapi import FastAPI
 import uvicorn
 from contextlib import asynccontextmanager
-from api_v1.activity.crud import update_all_activity_days_in_period
-from api_v1.activity_day.crud import update_one_activity_days_in_period
+from api_v1.activity.crud import update_all_activity_all_children_in_period
 from core.models import Base, db_helper
 from api_v1 import router as router_v1
 from core.config import settings
@@ -16,7 +14,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 async def tick():
     async with db_helper.session_factory() as session:
-        result = await update_all_activity_days_in_period(session=session, child_id=1)
+        result = await update_all_activity_all_children_in_period(session=session)
         # result = await update_one_activity_days_in_period(session=session, activity_id=2)
         print(result)
     # print(f"threading {threading.get_ident()} Hello, the time is", datetime.now())
@@ -26,7 +24,8 @@ async def tick():
 async def lifespan(app: FastAPI):
     global scheduler
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(tick, "interval", seconds=100000)
+    # scheduler.add_job(tick, "interval", seconds=100000,)
+    scheduler.add_job(tick, "cron", day_of_week="sat", hour="11", minute="55")
     scheduler.start()
     async with db_helper.engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

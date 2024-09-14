@@ -5,6 +5,7 @@ from api_v1.activity_day.crud import (
     editor_activity_day_next_week,
     get_activity_days_between_date,
 )
+from api_v1.child.crud import get_children
 from core.models import Activity, Week, Activity_day, activity_mtm_week
 from sqlalchemy.engine import Result
 from sqlalchemy import select, and_
@@ -176,6 +177,19 @@ async def get_activity_with_day_of_week(
     activity: Activity | None = result.scalars().one_or_none()
     return activity
 
+
+async def update_all_activity_all_children_in_period(
+        session: AsyncSession,
+) -> str:
+    """Обновляем все активности всех детей"""
+    result_text = ""
+    children = await get_children(session=session)
+    if len(children) == 0:
+        return "No children found\n"
+    else:
+        for child in children:
+            result_text += await update_all_activity_days_in_period(session=session, child_id=child.id)
+        return result_text
 
 async def update_all_activity_days_in_period(
     session: AsyncSession,
