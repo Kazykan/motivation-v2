@@ -18,7 +18,7 @@ import { useTgUser } from "@/store/tg_user"
 import { DialogAddChildWithoutBotId } from "../form/dialog-add-child-without-bot-id"
 import { useParent } from "@/store/parent"
 import { ChildSelect } from "@/widgets/ChildSelect"
-import { TableChildSumDone } from "@/widgets/TableChildSumDone"
+import { TableChildSum } from "@/widgets/TableChildSum"
 
 export function TabsLayoutParent() {
   const setChildId = useChild((state) => state.setChildId)
@@ -60,11 +60,9 @@ export function TabsLayoutParent() {
                     <ChildTabContent>
                       <ChildSelect child_id={ChildId.toString()} />
                     </ChildTabContent>
-                  ):
-                    <ChildTabContent>
-                      {null}
-                    </ChildTabContent>
-                  }
+                  ) : (
+                    <ChildTabContent>{null}</ChildTabContent>
+                  )}
                 </>
               ) : (
                 <div>нет детей</div>
@@ -75,7 +73,7 @@ export function TabsLayoutParent() {
             <Card>
               <CardContent className="space-y-2 mt-2">
                 <div className="space-y-1">
-                  <TableChildSumDone />
+                  <TableChildSum />
                 </div>
               </CardContent>
               <CardFooter>

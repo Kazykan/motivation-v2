@@ -11,14 +11,13 @@ import { useChildByIdQuery } from "@/hooks/useChildQuery"
 import { useTgUser } from "@/store/tg_user"
 import { useChild } from "@/store/user"
 import { useWeek } from "@/store/week"
-import { useMemo } from "react"
 import { useActivityQuery } from "@/hooks/useActivityQuery"
-import { useActivitySumDone } from "@/hooks/useActivitySumDone"
 import { useSwitchEdit } from "@/store/switch_edit"
 import { DialogAddActivity } from "../form/dialog-add-activity"
 import { PaginationWeeks } from "./Paginator-week"
-import currencyFormatMoney from "@/service/current.format.money"
 import { Switch } from "../ui/switch"
+import { ChildSumActivityAll } from "@/widgets/ChildSumActivityAll"
+import { ChildSumActivityDone } from "@/widgets/ChildSumActivityDone"
 
 export function ChildTabContent({ children }: { children: React.ReactNode }) {
   const startOfDate = useWeek((state) => state.start_of_date)
@@ -28,22 +27,8 @@ export function ChildTabContent({ children }: { children: React.ReactNode }) {
   const setCurrentWeek = useWeek((state) => state.setCurrentWeek)
   const ChildId = useChild((state) => state.ChildId)
   const tgParentId = useTgUser((state) => state.tgParentId)
-
   const child = useChildByIdQuery(ChildId)
-
   const activities = useActivityQuery(child?.data?.id)
-
-  const sumActivitiesDays = useActivitySumDone(
-    child?.data?.id,
-    startOfDate,
-    endOfWeek
-  )
-
-  const sumAllActivitiesCost = useMemo(() => {
-    return (
-      activities.data?.reduce((sum, activity) => sum + activity.cost, 0) || 0
-    )
-  }, [activities.data])
 
   return (
     <>
@@ -69,10 +54,9 @@ export function ChildTabContent({ children }: { children: React.ReactNode }) {
           <p>
             Итог:{" "}
             <span className="font-bold text-primary">
-              {sumActivitiesDays &&
-                currencyFormatMoney(sumActivitiesDays?.data)}
+              <ChildSumActivityDone child_id={child.data?.id!} />
             </span>
-            /{" "}{currencyFormatMoney(sumAllActivitiesCost)}
+            / <ChildSumActivityAll child_id={child.data?.id!} />
           </p>
           {startOfDate && endOfWeek && <PaginationWeeks />}
         </CardDescription>
