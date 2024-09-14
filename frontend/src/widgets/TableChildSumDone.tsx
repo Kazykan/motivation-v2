@@ -10,11 +10,14 @@ import {
 import { useParentIdQuery } from "@/hooks/useParentQuery"
 import { useParent } from "@/store/parent"
 import { ChildSumActivityDone } from "./ChildSumActivityDone"
+import { ChildSumActivityAll } from "./ChildSumActivityAll"
+
      
   export function TableChildSumDone() {
     const parentId = useParent((state) => state.parentId)
-
     const parent = useParentIdQuery(parentId, !!parentId)
+
+
 
     return (
       <Table>
@@ -32,8 +35,8 @@ import { ChildSumActivityDone } from "./ChildSumActivityDone"
             <TableRow key={child.id}>
               <TableCell className="font-medium">{child.name}</TableCell>
               <TableCell>{child.sex}</TableCell>
-              <TableCell>{child.max_payout}</TableCell>
-              <TableCell className="text-right"><ChildSumActivityDone child_id={child.id} /></TableCell>
+              <TableCell className="text-muted-foreground"><ChildSumActivityAll child_id={child.id} /></TableCell>
+              <TableCell className="text-right text-primary font-bold"><ChildSumActivityDone child_id={child.id} /></TableCell>
             </TableRow>
           ))}
         </TableBody>
